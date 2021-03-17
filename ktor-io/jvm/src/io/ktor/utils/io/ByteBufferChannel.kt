@@ -820,41 +820,6 @@ internal open class ByteBufferChannel(
         }
     }
 
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readBoolean(): Boolean {
-        return readByte() != 0.toByte()
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readByte(): Byte {
-        return readPrimitive(1, ByteBuffer::get)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readShort(): Short {
-        return readPrimitive(2, ByteBuffer::getShort)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readInt(): Int {
-        return readPrimitive(4, ByteBuffer::getInt)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readLong(): Long {
-        return readPrimitive(8, ByteBuffer::getLong)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readFloat(): Float {
-        return intBitsToFloat(readPrimitive(4, ByteBuffer::getInt))
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    final override suspend fun readDouble(): Double {
-        return longBitsToDouble(readPrimitive(8, ByteBuffer::getLong))
-    }
-
     internal suspend inline fun <T : Number> readPrimitive(
         size: Int,
         getter: ByteBuffer.() -> T
@@ -943,36 +908,6 @@ internal open class ByteBufferChannel(
             if (state === ReadWriteBufferState.Terminated) return block(joined.delegatedTo)
             writeSuspend(1)
         }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeByte(b: Byte) {
-        writePrimitive(1, { writeByte(b) }, { put(b) })
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeShort(s: Short) {
-        writePrimitive(2, { writeShort(s) }, { putShort(s) })
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeInt(i: Int) {
-        writePrimitive(4, { writeInt(i) }, { putInt(i) })
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeLong(l: Long) {
-        writePrimitive(8, { writeLong(l) }, { putLong(l) })
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeDouble(d: Double) {
-        writeLong(doubleToRawLongBits(d))
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeFloat(f: Float) {
-        writeInt(floatToRawIntBits(f))
     }
 
     internal suspend inline fun writePrimitive(

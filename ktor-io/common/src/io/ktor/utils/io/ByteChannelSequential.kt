@@ -7,6 +7,7 @@ import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.internal.*
 import io.ktor.utils.io.pool.*
 import kotlinx.atomicfu.locks.*
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.*
 
 @Deprecated("This is going to become internal. Use ByteReadChannel receiver instead.", level = DeprecationLevel.ERROR)
@@ -174,13 +175,6 @@ public abstract class ByteChannelSequentialBase(
         }
     }
 
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeByte(b: Byte) {
-        awaitAtLeastNBytesAvailableForWrite(1)
-        writable.writeByte(b)
-        afterWrite(1)
-    }
-
     internal inline fun <T : Any> reverseWrite(value: () -> T, reversed: () -> T): T {
         @Suppress("DEPRECATION_ERROR")
         return if (writeByteOrder == ByteOrder.BIG_ENDIAN) {
@@ -188,41 +182,6 @@ public abstract class ByteChannelSequentialBase(
         } else {
             reversed()
         }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeShort(s: Short) {
-        awaitAtLeastNBytesAvailableForWrite(2)
-        writable.writeShort(reverseWrite({ s }, { s.reverseByteOrder() }))
-        afterWrite(2)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeInt(i: Int) {
-        awaitAtLeastNBytesAvailableForWrite(4)
-        writable.writeInt(reverseWrite({ i }, { i.reverseByteOrder() }))
-        afterWrite(4)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeLong(l: Long) {
-        awaitAtLeastNBytesAvailableForWrite(8)
-        writable.writeLong(reverseWrite({ l }, { l.reverseByteOrder() }))
-        afterWrite(8)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeFloat(f: Float) {
-        awaitAtLeastNBytesAvailableForWrite(4)
-        writable.writeFloat(reverseWrite({ f }, { f.reverseByteOrder() }))
-        afterWrite(4)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun writeDouble(d: Double) {
-        awaitAtLeastNBytesAvailableForWrite(8)
-        writable.writeDouble(reverseWrite({ d }, { d.reverseByteOrder() }))
-        afterWrite(8)
     }
 
     override suspend fun writePacket(packet: ByteReadPacket) {
@@ -334,15 +293,6 @@ public abstract class ByteChannelSequentialBase(
         afterWrite(written)
     }
 
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readByte(): Byte {
-        return if (readable.isNotEmpty) {
-            readable.readByte().also { afterRead(1) }
-        } else {
-            readByteSlow()
-        }
-    }
-
     internal fun checkClosed(n: Int) {
         if (closed) {
             throw closedCause ?: prematureClose(n)
@@ -351,28 +301,6 @@ public abstract class ByteChannelSequentialBase(
 
     private fun prematureClose(n: Int): Exception {
         return EOFException("$n bytes required but EOF reached")
-    }
-
-    private suspend fun readByteSlow(): Byte {
-        do {
-            awaitSuspend(1)
-
-            if (readable.isNotEmpty) return readable.readByte().also { afterRead(1) }
-            checkClosed(1)
-        } while (true)
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readShort(): Short {
-        return if (readable.hasBytes(2)) {
-            readable.readShort().reverseRead().also { afterRead(2) }
-        } else {
-            readShortSlow()
-        }
-    }
-
-    private suspend fun readShortSlow(): Short {
-        readNSlow(2) { return readable.readShort().reverseRead().also { afterRead(2) } }
     }
 
     @Deprecated("Consider providing consumed count of bytes", level = DeprecationLevel.ERROR)
@@ -413,62 +341,6 @@ public abstract class ByteChannelSequentialBase(
     internal inline fun Double.reverseRead(): Double = when {
         readByteOrder == ByteOrder.BIG_ENDIAN -> this
         else -> this.reverseByteOrder()
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readInt(): Int {
-        return if (readable.hasBytes(4)) {
-            readable.readInt().reverseRead().also { afterRead(4) }
-        } else {
-            readIntSlow()
-        }
-    }
-
-    private suspend fun readIntSlow(): Int {
-        readNSlow(4) {
-            return readable.readInt().reverseRead().also { afterRead(4) }
-        }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readLong(): Long {
-        return if (readable.hasBytes(8)) {
-            readable.readLong().reverseRead().also { afterRead(8) }
-        } else {
-            readLongSlow()
-        }
-    }
-
-    private suspend fun readLongSlow(): Long {
-        readNSlow(8) {
-            return readable.readLong().reverseRead().also { afterRead(8) }
-        }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readFloat(): Float = if (readable.hasBytes(4)) {
-        readable.readFloat().reverseRead().also { afterRead(4) }
-    } else {
-        readFloatSlow()
-    }
-
-    private suspend fun readFloatSlow(): Float {
-        readNSlow(4) {
-            return readable.readFloat().reverseRead().also { afterRead(4) }
-        }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readDouble(): Double = if (readable.hasBytes(8)) {
-        readable.readDouble().reverseRead().also { afterRead(8) }
-    } else {
-        readDoubleSlow()
-    }
-
-    private suspend fun readDoubleSlow(): Double {
-        readNSlow(8) {
-            return readable.readDouble().reverseRead().also { afterRead(8) }
-        }
     }
 
     override suspend fun readRemaining(limit: Long, headerSizeHint: Int): ByteReadPacket {
@@ -616,18 +488,6 @@ public abstract class ByteChannelSequentialBase(
             if (rc == -1) throw EOFException("Unexpected end of stream")
             written += rc
         }
-    }
-
-    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
-    override suspend fun readBoolean(): Boolean {
-        return if (readable.canRead()) (readable.readByte() == 1.toByte()).also { afterRead(1) }
-        else readBooleanSlow()
-    }
-
-    private suspend fun readBooleanSlow(): Boolean {
-        awaitSuspend(1)
-        checkClosed(1)
-        return readBoolean()
     }
 
     private var lastReadAvailable: Int
@@ -805,7 +665,7 @@ public abstract class ByteChannelSequentialBase(
             return false
         }
 
-        return close(cause ?: io.ktor.utils.io.CancellationException("Channel cancelled"))
+        return close(cause ?: CancellationException("Channel cancelled"))
     }
 
     override fun close(cause: Throwable?): Boolean {
