@@ -47,7 +47,7 @@ public abstract class ByteChannelSequentialBase(
             state.closed = value
         }
 
-    protected val writable: BytePacketBuilder = BytePacketBuilder(0, pool)
+    internal val writable: BytePacketBuilder = BytePacketBuilder(0, pool)
     protected val readable: ByteReadPacket = ByteReadPacket(initial, pool)
 
     private val slot = AwaitingSlot()
@@ -174,13 +174,14 @@ public abstract class ByteChannelSequentialBase(
         }
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeByte(b: Byte) {
         awaitAtLeastNBytesAvailableForWrite(1)
         writable.writeByte(b)
         afterWrite(1)
     }
 
-    private inline fun <T : Any> reverseWrite(value: () -> T, reversed: () -> T): T {
+    internal inline fun <T : Any> reverseWrite(value: () -> T, reversed: () -> T): T {
         @Suppress("DEPRECATION_ERROR")
         return if (writeByteOrder == ByteOrder.BIG_ENDIAN) {
             value()
@@ -189,30 +190,35 @@ public abstract class ByteChannelSequentialBase(
         }
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeShort(s: Short) {
         awaitAtLeastNBytesAvailableForWrite(2)
         writable.writeShort(reverseWrite({ s }, { s.reverseByteOrder() }))
         afterWrite(2)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeInt(i: Int) {
         awaitAtLeastNBytesAvailableForWrite(4)
         writable.writeInt(reverseWrite({ i }, { i.reverseByteOrder() }))
         afterWrite(4)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeLong(l: Long) {
         awaitAtLeastNBytesAvailableForWrite(8)
         writable.writeLong(reverseWrite({ l }, { l.reverseByteOrder() }))
         afterWrite(8)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeFloat(f: Float) {
         awaitAtLeastNBytesAvailableForWrite(4)
         writable.writeFloat(reverseWrite({ f }, { f.reverseByteOrder() }))
         afterWrite(4)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     override suspend fun writeDouble(d: Double) {
         awaitAtLeastNBytesAvailableForWrite(8)
         writable.writeDouble(reverseWrite({ d }, { d.reverseByteOrder() }))
@@ -848,7 +854,7 @@ public abstract class ByteChannelSequentialBase(
         afterWrite(0)
     }
 
-    protected fun afterWrite(count: Int) {
+    internal fun afterWrite(count: Int) {
         _totalBytesWritten += count
 
         if (closed) {
