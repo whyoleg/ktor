@@ -820,35 +820,42 @@ internal open class ByteBufferChannel(
         }
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readBoolean(): Boolean {
         return readByte() != 0.toByte()
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readByte(): Byte {
         return readPrimitive(1, ByteBuffer::get)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readShort(): Short {
         return readPrimitive(2, ByteBuffer::getShort)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readInt(): Int {
         return readPrimitive(4, ByteBuffer::getInt)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readLong(): Long {
         return readPrimitive(8, ByteBuffer::getLong)
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readFloat(): Float {
         return intBitsToFloat(readPrimitive(4, ByteBuffer::getInt))
     }
 
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     final override suspend fun readDouble(): Double {
         return longBitsToDouble(readPrimitive(8, ByteBuffer::getLong))
     }
 
-    private suspend inline fun <T : Number> readPrimitive(
+    internal suspend inline fun <T : Number> readPrimitive(
         size: Int,
         getter: ByteBuffer.() -> T
     ): T {

@@ -70,42 +70,49 @@ public expect interface ByteReadChannel {
      * Reads a long number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readLong(): Long
 
     /**
      * Reads an int number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readInt(): Int
 
     /**
      * Reads a short number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readShort(): Short
 
     /**
      * Reads a byte (suspending if no bytes available yet) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readByte(): Byte
 
     /**
      * Reads a boolean value (suspending if no bytes available yet) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readBoolean(): Boolean
 
     /**
      * Reads double number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readDouble(): Double
 
     /**
      * Reads float number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Replaced with extension function", level = DeprecationLevel.HIDDEN)
     public suspend fun readFloat(): Float
 
     /**
