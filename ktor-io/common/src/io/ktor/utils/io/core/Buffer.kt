@@ -383,7 +383,7 @@ public open class Buffer(public val memory: Memory) {
          * The empty buffer singleton: it has zero capacity for read and write.
          */
         @Suppress("DEPRECATION")
-        public val Empty: Buffer get() = IoBuffer.Empty
+        public val Empty: Buffer get() = ChunkBuffer.Empty
     }
 }
 
