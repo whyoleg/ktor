@@ -26,7 +26,7 @@ import io.ktor.utils.io.pool.*
 public class BytePacketBuilder(
     private var headerSizeHint: Int = 0,
     pool: ObjectPool<ChunkBuffer>
-) : AbstractOutput(pool) {
+) : Output(pool) {
     init {
         require(headerSizeHint >= 0) { "shouldn't be negative: headerSizeHint = $headerSizeHint" }
     }
