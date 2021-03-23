@@ -81,50 +81,7 @@ public interface SuspendableReadSession : ReadSession {
 }
 
 @PublishedApi
-internal suspend fun ByteReadChannel.requestBuffer(desiredSize: Int): Buffer? {
-    val readSession: SuspendableReadSession? = when (this) {
-        is SuspendableReadSession -> this
-        is HasReadSession -> startReadSession()
-        else -> null
-    }
-
-    if (readSession != null) {
-        val buffer = readSession.request(desiredSize.coerceAtMost(Buffer.ReservedSize))
-        if (buffer != null) {
-            return buffer
-        }
-
-        return readSession.requestBufferSuspend(desiredSize)
-    }
-
-    return requestBufferFallback(desiredSize)
-}
-
-@PublishedApi
-internal suspend fun ByteReadChannel.completeReadingFromBuffer(buffer: Buffer?, bytesRead: Int) {
-    check(bytesRead >= 0) { "bytesRead shouldn't be negative: $bytesRead" }
-    val readSession: SuspendableReadSession? = readSessionFor()
-
-    if (readSession != null) {
-        readSession.discard(bytesRead)
-        if (this is HasReadSession) {
-            endReadSession()
-        }
-        return
-    }
-
-    if (buffer is ChunkBuffer && buffer !== ChunkBuffer.Empty) {
-        buffer.release(ChunkBuffer.Pool)
-        discard(bytesRead.toLong())
-    }
-}
-
-private suspend fun SuspendableReadSession.requestBufferSuspend(desiredSize: Int): Buffer? {
-    await(desiredSize)
-    return request(1)
-}
-
-private suspend fun ByteReadChannel.requestBufferFallback(desiredSize: Int): ChunkBuffer {
+internal suspend fun ByteReadChannel.requestBuffer(desiredSize: Int): Buffer {
     val chunk = ChunkBuffer.Pool.borrow()
     val copied = peekTo(
         chunk.memory,
@@ -133,8 +90,17 @@ private suspend fun ByteReadChannel.requestBufferFallback(desiredSize: Int): Chu
     )
 
     chunk.commitWritten(copied.toInt())
-
     return chunk
+}
+
+@PublishedApi
+internal suspend fun ByteReadChannel.completeReadingFromBuffer(buffer: Buffer?, bytesRead: Int) {
+    check(bytesRead >= 0) { "bytesRead shouldn't be negative: $bytesRead" }
+
+    if (buffer is ChunkBuffer && buffer !== ChunkBuffer.Empty) {
+        buffer.release(ChunkBuffer.Pool)
+        discard(bytesRead.toLong())
+    }
 }
 
 internal interface HasReadSession {
@@ -143,7 +109,3 @@ internal interface HasReadSession {
     public fun endReadSession()
 }
 
-private inline fun ByteReadChannel.readSessionFor(): SuspendableReadSession? = when {
-    this is HasReadSession -> startReadSession()
-    else -> null
-}

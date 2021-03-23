@@ -58,7 +58,6 @@ public expect interface ByteReadChannel {
 
     public suspend fun readFully(dst: ChunkBuffer, n: Int)
 
-
     /**
      * Reads the specified amount of bytes and makes a byte packet from them. Fails if channel has been closed
      * and not enough bytes available. Accepts [headerSizeHint] to be provided, see [BytePacketBuilder].

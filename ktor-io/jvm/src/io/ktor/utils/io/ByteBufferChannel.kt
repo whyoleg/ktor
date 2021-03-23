@@ -820,7 +820,7 @@ internal open class ByteBufferChannel(
         }
     }
 
-    internal suspend inline fun <T : Number> readPrimitive(
+    internal suspend inline fun <T : Any> consume(
         size: Int,
         getter: ByteBuffer.() -> T
     ): T {

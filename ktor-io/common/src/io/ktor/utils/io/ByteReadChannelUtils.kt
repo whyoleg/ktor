@@ -7,6 +7,10 @@ import io.ktor.utils.io.bits.*
 import io.ktor.utils.io.core.*
 import io.ktor.utils.io.readByte as readByte
 
+public expect suspend inline fun <T> ByteReadChannel.readExact(
+    size: Int, block: (memory: Memory, startIndex: Int, endIndex: Int) -> T
+): T
+
 /**
  * Reads a long number (suspending if not enough bytes available) or fails if channel has been closed
  * and not enough bytes.
@@ -67,7 +71,7 @@ public suspend fun ByteReadChannel.readByte(): Byte {
  * Reads a boolean value (suspending if no bytes available yet) or fails if channel has been closed
  * and not enough bytes.
  */
-public suspend fun ByteReadChannel.readBoolean(): Boolean = readByte() == 0.toByte()
+public suspend fun ByteReadChannel.readBoolean(): Boolean = readByte() != 0.toByte()
 
 /**
  * Reads double number (suspending if not enough bytes available) or fails if channel has been closed
@@ -96,4 +100,3 @@ public suspend fun ByteReadChannel.readFloat(): Float {
 
     return result
 }
-
