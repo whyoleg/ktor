@@ -42,6 +42,7 @@ public final class io/ktor/client/features/auth/providers/BasicAuthProvider : io
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun addRequestHeaders (Lio/ktor/client/request/HttpRequestBuilder;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun constructBasicAuthValue$ktor_client_auth ()Ljava/lang/String;
 	public fun getSendWithoutRequest ()Z
 	public fun isApplicable (Lio/ktor/http/auth/HttpAuthHeader;)Z
 }

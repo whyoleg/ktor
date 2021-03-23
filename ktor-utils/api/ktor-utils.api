@@ -39,6 +39,7 @@ public final class io/ktor/util/Base64JvmKt {
 }
 
 public final class io/ktor/util/Base64Kt {
+	public static final fun clearFrom ([BI)V
 	public static final synthetic fun decodeBase64 (Lio/ktor/utils/io/core/ByteReadPacket;)Ljava/lang/String;
 	public static final synthetic fun decodeBase64 (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun decodeBase64Bytes (Lio/ktor/utils/io/core/ByteReadPacket;)Lio/ktor/utils/io/core/Input;
@@ -47,6 +48,8 @@ public final class io/ktor/util/Base64Kt {
 	public static final fun encodeBase64 (Lio/ktor/utils/io/core/ByteReadPacket;)Ljava/lang/String;
 	public static final fun encodeBase64 (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun encodeBase64 ([B)Ljava/lang/String;
+	public static final fun fromBase64 (B)B
+	public static final fun toBase64 (I)C
 }
 
 public final class io/ktor/util/BufferViewJvmKt {
@@ -116,6 +119,14 @@ public final class io/ktor/util/CaseInsensitiveSet : java/util/Set, kotlin/jvm/i
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public final class io/ktor/util/CaseInsensitiveString {
+	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContent ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/ktor/util/CharsetKt {
 	public static final fun isLowerCase (C)Z
 	public static final fun toCharArray (Ljava/lang/String;)[C
@@ -127,6 +138,10 @@ public final class io/ktor/util/CollectionsJvmKt {
 
 public final class io/ktor/util/CollectionsKt {
 	public static final fun caseInsensitiveMap ()Ljava/util/Map;
+}
+
+public final class io/ktor/util/CoroutinesUtilsJvmKt {
+	public static final fun startCoroutineUninterceptedOrReturn3 (Lkotlin/jvm/functions/Function3;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/ktor/util/CoroutinesUtilsKt {
@@ -151,10 +166,36 @@ public final class io/ktor/util/CryptoKt {
 }
 
 public final class io/ktor/util/DeflaterKt {
+	public static final field GZIP_MAGIC S
 	public static final fun deflated (Lio/ktor/utils/io/ByteReadChannel;ZLio/ktor/utils/io/pool/ObjectPool;Lkotlin/coroutines/CoroutineContext;)Lio/ktor/utils/io/ByteReadChannel;
 	public static final fun deflated (Lio/ktor/utils/io/ByteWriteChannel;ZLio/ktor/utils/io/pool/ObjectPool;Lkotlin/coroutines/CoroutineContext;)Lio/ktor/utils/io/ByteWriteChannel;
 	public static synthetic fun deflated$default (Lio/ktor/utils/io/ByteReadChannel;ZLio/ktor/utils/io/pool/ObjectPool;Lkotlin/coroutines/CoroutineContext;ILjava/lang/Object;)Lio/ktor/utils/io/ByteReadChannel;
 	public static synthetic fun deflated$default (Lio/ktor/utils/io/ByteWriteChannel;ZLio/ktor/utils/io/pool/ObjectPool;Lkotlin/coroutines/CoroutineContext;ILjava/lang/Object;)Lio/ktor/utils/io/ByteWriteChannel;
+	public static final fun getGZIP_HEADER_PADDING ()[B
+	public static final fun updateKeepPosition (Ljava/util/zip/Checksum;Ljava/nio/ByteBuffer;)V
+}
+
+public class io/ktor/util/DelegatingMutableSet : java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
+	public fun <init> (Ljava/util/Set;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public fun convert (Ljava/util/Collection;)Ljava/util/Collection;
+	public fun convertTo (Ljava/util/Collection;)Ljava/util/Collection;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getSize ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class io/ktor/util/Digest {
@@ -200,6 +241,19 @@ public abstract interface annotation class io/ktor/util/InternalAPI : java/lang/
 public abstract interface annotation class io/ktor/util/KtorExperimentalAPI : java/lang/annotation/Annotation {
 }
 
+public final class io/ktor/util/LRUCache : java/util/LinkedHashMap {
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;I)V
+	public final fun entrySet ()Ljava/util/Set;
+	public fun get (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun getEntries ()Ljava/util/Set;
+	public fun getKeys ()Ljava/util/Set;
+	public fun getSize ()I
+	public fun getValues ()Ljava/util/Collection;
+	public final fun keySet ()Ljava/util/Set;
+	public final fun size ()I
+	public final fun values ()Ljava/util/Collection;
+}
+
 public final class io/ktor/util/Lock {
 	public fun <init> ()V
 	public final fun close ()V
@@ -234,6 +288,11 @@ public final class io/ktor/util/NioPathKt {
 	public static final fun normalizeAndRelativize (Ljava/nio/file/Path;)Ljava/nio/file/Path;
 }
 
+public final class io/ktor/util/NonceKt {
+	public static final fun ensureNonceGeneratorRunning ()V
+	public static final fun getSeedChannel ()Lkotlinx/coroutines/channels/Channel;
+}
+
 public abstract interface class io/ktor/util/NonceManager {
 	public abstract fun newNonce (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun verifyNonce (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -241,6 +300,7 @@ public abstract interface class io/ktor/util/NonceManager {
 
 public final class io/ktor/util/PathKt {
 	public static final fun combineSafe (Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
+	public static final fun dropLeadingTopDirs (Ljava/lang/String;)I
 	public static final fun normalizeAndRelativize (Ljava/io/File;)Ljava/io/File;
 }
 
@@ -255,6 +315,10 @@ public final class io/ktor/util/PlatformUtils {
 public final class io/ktor/util/RangesKt {
 	public static final fun contains (Lkotlin/ranges/LongRange;Lkotlin/ranges/LongRange;)Z
 	public static final fun getLength (Lkotlin/ranges/LongRange;)J
+}
+
+public final class io/ktor/util/StackFramesJvmKt {
+	public static final fun createStackTraceElement (Lkotlin/reflect/KClass;Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/StackTraceElement;
 }
 
 public final class io/ktor/util/StatelessHmacNonceManager : io/ktor/util/NonceManager {
@@ -384,6 +448,7 @@ public class io/ktor/util/StringValuesSingleImpl : io/ktor/util/StringValues {
 }
 
 public final class io/ktor/util/TextKt {
+	public static final fun caseInsensitive (Ljava/lang/String;)Lio/ktor/util/CaseInsensitiveString;
 	public static final fun chomp (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Lkotlin/Pair;
 	public static final fun escapeHTML (Ljava/lang/String;)Ljava/lang/String;
 	public static final fun toLowerCasePreservingASCIIRules (Ljava/lang/String;)Ljava/lang/String;
@@ -401,6 +466,8 @@ public final class io/ktor/util/cio/ByteBufferPool : io/ktor/utils/io/pool/Defau
 }
 
 public final class io/ktor/util/cio/ByteBufferPoolKt {
+	public static final field DEFAULT_BUFFER_SIZE I
+	public static final field DEFAULT_KTOR_POOL_SIZE I
 	public static final fun getKtorDefaultPool ()Lio/ktor/utils/io/pool/ObjectPool;
 }
 
@@ -511,6 +578,9 @@ public final class io/ktor/util/collections/ConcurrentList : java/util/List, kot
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public final class io/ktor/util/collections/ConcurrentListKt {
+}
+
 public final class io/ktor/util/collections/ConcurrentMap : java/util/Map, kotlin/jvm/internal/markers/KMutableMap {
 	public fun <init> ()V
 	public fun <init> (Lio/ktor/util/Lock;I)V
@@ -528,12 +598,16 @@ public final class io/ktor/util/collections/ConcurrentMap : java/util/Map, kotli
 	public fun getSize ()I
 	public fun getValues ()Ljava/util/Collection;
 	public fun isEmpty ()Z
+	public final fun iterator$ktor_utils ()Ljava/util/Iterator;
 	public final fun keySet ()Ljava/util/Set;
 	public fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun putAll (Ljava/util/Map;)V
 	public fun remove (Ljava/lang/Object;)Ljava/lang/Object;
 	public final fun size ()I
 	public final fun values ()Ljava/util/Collection;
+}
+
+public final class io/ktor/util/collections/ConcurrentMapKt {
 }
 
 public final class io/ktor/util/collections/ConcurrentSet : java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
@@ -556,6 +630,98 @@ public final class io/ktor/util/collections/ConcurrentSet : java/util/Set, kotli
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public final class io/ktor/util/collections/internal/ConcurrentMapKeys : java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
+	public fun <init> (Lio/ktor/util/collections/ConcurrentMap;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class io/ktor/util/collections/internal/ConcurrentMapValues : java/util/Collection, kotlin/jvm/internal/markers/KMutableCollection {
+	public fun <init> (Lio/ktor/util/collections/ConcurrentMap;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class io/ktor/util/collections/internal/MutableMapEntries : java/util/Set, kotlin/jvm/internal/markers/KMutableSet {
+	public fun <init> (Lio/ktor/util/collections/ConcurrentMap;)V
+	public synthetic fun add (Ljava/lang/Object;)Z
+	public fun add (Ljava/util/Map$Entry;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public final fun contains (Ljava/lang/Object;)Z
+	public fun contains (Ljava/util/Map$Entry;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public fun getSize ()I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public final fun remove (Ljava/lang/Object;)Z
+	public fun remove (Ljava/util/Map$Entry;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public final fun size ()I
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
+public final class io/ktor/util/collections/internal/SharedForwardList : java/lang/Iterable, kotlin/jvm/internal/markers/KMutableIterable {
+	public fun <init> ()V
+	public final fun appendHead (Ljava/lang/Object;)V
+	public fun iterator ()Ljava/util/Iterator;
+}
+
+public final class io/ktor/util/collections/internal/SharedList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+	public fun <init> (I)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun clear ()V
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public fun get (I)Ljava/lang/Object;
+	public fun getSize ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public fun remove (I)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun set (ILjava/lang/Object;)V
+	public final fun size ()I
+	public fun subList (II)Ljava/util/List;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+}
+
 public final class io/ktor/util/date/DateJvmKt {
 	public static final fun GMTDate (IIIILio/ktor/util/date/Month;I)Lio/ktor/util/date/GMTDate;
 	public static final fun GMTDate (Ljava/lang/Long;)Lio/ktor/util/date/GMTDate;
@@ -572,6 +738,7 @@ public final class io/ktor/util/date/DateKt {
 
 public final class io/ktor/util/date/GMTDate : java/lang/Comparable {
 	public static final field Companion Lio/ktor/util/date/GMTDate$Companion;
+	public fun <init> (IIILio/ktor/util/date/WeekDay;IILio/ktor/util/date/Month;IJ)V
 	public fun compareTo (Lio/ktor/util/date/GMTDate;)I
 	public synthetic fun compareTo (Ljava/lang/Object;)I
 	public final fun component1 ()I
@@ -601,6 +768,24 @@ public final class io/ktor/util/date/GMTDate : java/lang/Comparable {
 
 public final class io/ktor/util/date/GMTDate$Companion {
 	public final fun getSTART ()Lio/ktor/util/date/GMTDate;
+}
+
+public final class io/ktor/util/date/GMTDateBuilder {
+	public field month Lio/ktor/util/date/Month;
+	public fun <init> ()V
+	public final fun build ()Lio/ktor/util/date/GMTDate;
+	public final fun getDayOfMonth ()Ljava/lang/Integer;
+	public final fun getHours ()Ljava/lang/Integer;
+	public final fun getMinutes ()Ljava/lang/Integer;
+	public final fun getMonth ()Lio/ktor/util/date/Month;
+	public final fun getSeconds ()Ljava/lang/Integer;
+	public final fun getYear ()Ljava/lang/Integer;
+	public final fun setDayOfMonth (Ljava/lang/Integer;)V
+	public final fun setHours (Ljava/lang/Integer;)V
+	public final fun setMinutes (Ljava/lang/Integer;)V
+	public final fun setMonth (Lio/ktor/util/date/Month;)V
+	public final fun setSeconds (Ljava/lang/Integer;)V
+	public final fun setYear (Ljava/lang/Integer;)V
 }
 
 public final class io/ktor/util/date/GMTDateParser {
@@ -686,11 +871,19 @@ public class io/ktor/util/internal/LockFreeLinkedListHead : io/ktor/util/interna
 	public fun <init> ()V
 	public synthetic fun describeRemove ()Lio/ktor/util/internal/AtomicDesc;
 	public final fun describeRemove ()Ljava/lang/Void;
+	public final synthetic fun forEach (Lkotlin/jvm/functions/Function1;)V
 	public final fun isEmpty ()Z
 	public final fun remove ()Z
+	public final fun validate$ktor_utils ()V
 }
 
 public final class io/ktor/util/internal/LockFreeLinkedListKt {
+	public static final field FAILURE I
+	public static final field SUCCESS I
+	public static final field UNDECIDED I
+	public static final fun getALREADY_REMOVED ()Ljava/lang/Object;
+	public static final fun getCONDITION_FALSE ()Ljava/lang/Object;
+	public static final fun getLIST_EMPTY ()Ljava/lang/Object;
 	public static final fun unwrap (Ljava/lang/Object;)Lio/ktor/util/internal/LockFreeLinkedListNode;
 }
 
@@ -714,9 +907,12 @@ public class io/ktor/util/internal/LockFreeLinkedListNode {
 	public final fun isRemoved ()Z
 	public final fun makeCondAddOp (Lio/ktor/util/internal/LockFreeLinkedListNode;Lkotlin/jvm/functions/Function0;)Lio/ktor/util/internal/LockFreeLinkedListNode$CondAddOp;
 	public fun remove ()Z
+	public final synthetic fun removeFirstIfIsInstanceOf ()Ljava/lang/Object;
+	public final synthetic fun removeFirstIfIsInstanceOfOrPeekIf (Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 	public final fun removeFirstOrNull ()Lio/ktor/util/internal/LockFreeLinkedListNode;
 	public fun toString ()Ljava/lang/String;
 	public final fun tryCondAddNext (Lio/ktor/util/internal/LockFreeLinkedListNode;Lio/ktor/util/internal/LockFreeLinkedListNode;Lio/ktor/util/internal/LockFreeLinkedListNode$CondAddOp;)I
+	public final fun validateNode$ktor_utils (Lio/ktor/util/internal/LockFreeLinkedListNode;Lio/ktor/util/internal/LockFreeLinkedListNode;)V
 }
 
 public abstract class io/ktor/util/internal/LockFreeLinkedListNode$AbstractAtomicDesc : io/ktor/util/internal/AtomicDesc {
@@ -798,8 +994,10 @@ public class io/ktor/util/pipeline/Pipeline {
 	public final fun insertPhaseAfter (Lio/ktor/util/pipeline/PipelinePhase;Lio/ktor/util/pipeline/PipelinePhase;)V
 	public final fun insertPhaseBefore (Lio/ktor/util/pipeline/PipelinePhase;Lio/ktor/util/pipeline/PipelinePhase;)V
 	public final fun intercept (Lio/ktor/util/pipeline/PipelinePhase;Lkotlin/jvm/functions/Function3;)V
+	public final fun interceptorsForTests$ktor_utils ()Ljava/util/List;
 	public final fun isEmpty ()Z
 	public final fun merge (Lio/ktor/util/pipeline/Pipeline;)V
+	public final fun phaseInterceptors$ktor_utils (Lio/ktor/util/pipeline/PipelinePhase;)Ljava/util/List;
 }
 
 public abstract interface class io/ktor/util/pipeline/PipelineContext : kotlinx/coroutines/CoroutineScope {
@@ -820,11 +1018,33 @@ public abstract interface class io/ktor/util/pipeline/PipelineExecutor {
 
 public final class io/ktor/util/pipeline/PipelineKt {
 	public static final fun execute (Lio/ktor/util/pipeline/Pipeline;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final synthetic fun intercept (Lio/ktor/util/pipeline/Pipeline;Lio/ktor/util/pipeline/PipelinePhase;Lkotlin/jvm/functions/Function3;)V
 }
 
 public final class io/ktor/util/pipeline/PipelinePhase {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getName ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/ktor/util/pipeline/StackTraceRecoverJvmKt {
+	public static final fun withCause (Ljava/lang/Throwable;Ljava/lang/Throwable;)Ljava/lang/Throwable;
+}
+
+public final class io/ktor/util/pipeline/StackTraceRecoverKt {
+	public static final fun recoverStackTraceBridge (Ljava/lang/Throwable;Lkotlin/coroutines/Continuation;)Ljava/lang/Throwable;
+}
+
+public final class io/ktor/util/pipeline/StackWalkingFailed {
+	public static final field INSTANCE Lio/ktor/util/pipeline/StackWalkingFailed;
+	public final fun failedToCaptureStackFrame ()V
+}
+
+public final class io/ktor/util/pipeline/StackWalkingFailedFrame : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public static final field INSTANCE Lio/ktor/util/pipeline/StackWalkingFailedFrame;
+	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
+	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
+	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+	public fun resumeWith (Ljava/lang/Object;)V
 }
 

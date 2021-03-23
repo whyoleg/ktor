@@ -52,6 +52,8 @@ public final class io/ktor/websocket/WebSocketServerSession$DefaultImpls {
 
 public final class io/ktor/websocket/WebSocketServerSessionKt {
 	public static final fun getApplication (Lio/ktor/websocket/WebSocketServerSession;)Lio/ktor/application/Application;
+	public static final fun toServerSession (Lio/ktor/http/cio/websocket/DefaultWebSocketSession;Lio/ktor/application/ApplicationCall;)Lio/ktor/websocket/DefaultWebSocketServerSession;
+	public static final fun toServerSession (Lio/ktor/http/cio/websocket/WebSocketSession;Lio/ktor/application/ApplicationCall;)Lio/ktor/websocket/WebSocketServerSession;
 }
 
 public final class io/ktor/websocket/WebSocketUpgrade : io/ktor/http/content/OutgoingContent$ProtocolUpgrade {
