@@ -12,7 +12,7 @@ import java.nio.*
 public fun ChunkBuffer(
     buffer: ByteBuffer
 ): ChunkBuffer {
-    return ChunkBuffer(Memory.of(buffer), null)
+    return ChunkBuffer(Memory.of(buffer), null, null)
 }
 
 @DangerousInternalIoApi

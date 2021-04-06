@@ -4,6 +4,16 @@ import io.ktor.utils.io.bits.*
 import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.pool.*
 
+public expect fun ByteReadPacket(
+    array: ByteArray,
+    offset: Int = 0,
+    length: Int = array.size,
+    block: (ByteArray) -> Unit
+): ByteReadPacket
+
+public fun ByteReadPacket(array: ByteArray, offset: Int = 0, length: Int = array.size): ByteReadPacket =
+    ByteReadPacket(array, offset, length) {}
+
 /**
  * Read-only immutable byte packet. Could be consumed only once however it does support [copy] that doesn't copy every byte
  * but creates a new view instead. Once packet created it should be either completely read (consumed) or released
@@ -46,16 +56,4 @@ public class ByteReadPacket internal constructor(
         public val ReservedSize: Int
             get() = Buffer.ReservedSize
     }
-}
-
-public expect fun ByteReadPacket(
-    array: ByteArray,
-    offset: Int = 0,
-    length: Int = array.size,
-    block: (ByteArray) -> Unit
-): ByteReadPacket
-
-@Suppress("NOTHING_TO_INLINE")
-public inline fun ByteReadPacket(array: ByteArray, offset: Int = 0, length: Int = array.size): ByteReadPacket {
-    return ByteReadPacket(array, offset, length) {}
 }

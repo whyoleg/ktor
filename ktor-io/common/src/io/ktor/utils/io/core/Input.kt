@@ -210,7 +210,7 @@ public abstract class Input(
         if (head !== empty) {
             this._head = empty
             tailRemaining = 0
-            head.releaseAll(pool)
+            head.release(pool)
         }
     }
 

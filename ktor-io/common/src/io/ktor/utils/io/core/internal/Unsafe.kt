@@ -1,10 +1,12 @@
-@file:Suppress("KDocMissingDocumentation")
-
 package io.ktor.utils.io.core.internal
 
 import io.ktor.utils.io.core.*
 import kotlin.jvm.*
 import kotlin.native.concurrent.*
+
+@JvmField
+@SharedImmutable
+internal val EmptyByteArray = ByteArray(0)
 
 /**
  * API marked with this annotation is internal and extremely fragile and not intended to be used by library users.
@@ -137,10 +139,6 @@ private fun Output.prepareWriteHeadFallback(current: ChunkBuffer?): ChunkBuffer 
 public fun Output.afterHeadWrite(current: ChunkBuffer) {
     afterHeadWrite()
 }
-
-@JvmField
-@SharedImmutable
-internal val EmptyByteArray = ByteArray(0)
 
 private fun Output.afterWriteHeadFallback(current: ChunkBuffer) {
     writeFully(current)

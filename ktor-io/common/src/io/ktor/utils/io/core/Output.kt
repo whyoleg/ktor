@@ -101,7 +101,7 @@ public abstract class Output internal constructor(
                 flush(chunk.memory, chunk.readPosition, chunk.readRemaining)
             }
         } finally {
-            oldTail.releaseAll(pool)
+            oldTail.release(pool)
         }
     }
 

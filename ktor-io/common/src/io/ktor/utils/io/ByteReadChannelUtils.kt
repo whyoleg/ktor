@@ -4,7 +4,6 @@
 package io.ktor.utils.io
 
 import io.ktor.utils.io.bits.*
-import io.ktor.utils.io.core.*
 import io.ktor.utils.io.readByte as readByte
 
 public expect suspend inline fun <T> ByteReadChannel.readExact(

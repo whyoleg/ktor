@@ -20,7 +20,7 @@ public fun XMLHttpRequest.responsePacket(): ByteReadPacket = when (responseType)
         ChunkBuffer(
             Memory.of(response.asDynamic() as DataView),
             null,
-            IoBuffer.NoPool
+            ChunkBuffer.NoPool
         ),
         ChunkBuffer.NoPoolManuallyManaged
     )

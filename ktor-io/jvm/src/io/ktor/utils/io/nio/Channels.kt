@@ -105,7 +105,7 @@ private fun ReadableByteChannel.readPacketImpl(min: Long, max: Long): ByteReadPa
             }
         }
     } catch (t: Throwable) {
-        head.releaseAll(pool)
+        head.release(pool)
         throw t
     }
 

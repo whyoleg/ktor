@@ -1,7 +1,6 @@
 package io.ktor.utils.io.core.internal
 
 import io.ktor.utils.io.bits.*
-import io.ktor.utils.io.bits.DefaultAllocator
 import io.ktor.utils.io.concurrent.*
 import io.ktor.utils.io.core.*
 import io.ktor.utils.io.pool.*
@@ -11,7 +10,8 @@ import kotlinx.atomicfu.*
 public class ChunkBuffer internal constructor(
     memory: Memory,
     origin: ChunkBuffer?,
-    internal val parentPool: ObjectPool<ChunkBuffer>?) : Buffer(memory) {
+    internal val parentPool: ObjectPool<ChunkBuffer>?
+) : Buffer(memory) {
     init {
         require(origin !== this) { "A chunk couldn't be a view of itself." }
     }
@@ -30,7 +30,8 @@ public class ChunkBuffer internal constructor(
      * @see appendNext
      * @see cleanNext
      */
-    public var next: ChunkBuffer? get() = nextRef.value
+    public var next: ChunkBuffer?
+        get() = nextRef.value
         set(newValue) {
             if (newValue == null) {
                 cleanNext()
@@ -59,16 +60,19 @@ public class ChunkBuffer internal constructor(
     }
 
     public fun release(pool: ObjectPool<ChunkBuffer>) {
-        if (release()) {
-            val origin = origin
-            if (origin != null) {
-                unlink()
-                origin.release(pool)
-            } else {
-                val poolToUse = parentPool ?: pool
-                poolToUse.recycle(this)
-            }
+        if (!release()) {
+            return
         }
+
+        val origin = origin
+        if (origin != null) {
+            unlink()
+            origin.release(pool)
+            return
+        }
+
+        val poolToUse = parentPool ?: pool
+        poolToUse.recycle(this)
     }
 
     internal fun unlink() {
@@ -144,8 +148,6 @@ public class ChunkBuffer internal constructor(
             }
         }
 
-        public val Empty: ChunkBuffer = ChunkBuffer(Memory.Empty, null)
-
         /**
          * A pool that always returns [ChunkBuffer.Empty]
          */
@@ -162,9 +164,11 @@ public class ChunkBuffer internal constructor(
             }
         }
 
+        public val Empty: ChunkBuffer = ChunkBuffer(Memory.Empty, null, EmptyPool)
+
         internal val NoPool: ObjectPool<ChunkBuffer> = object : NoPoolImpl<ChunkBuffer>() {
             override fun borrow(): ChunkBuffer {
-                return ChunkBuffer(DefaultAllocator.alloc(DEFAULT_BUFFER_SIZE), null, this as ObjectPool<IoBuffer>)
+                return ChunkBuffer(DefaultAllocator.alloc(DEFAULT_BUFFER_SIZE), null, this)
             }
 
             override fun recycle(instance: ChunkBuffer) {

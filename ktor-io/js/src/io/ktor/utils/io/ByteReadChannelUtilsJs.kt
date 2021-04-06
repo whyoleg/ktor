@@ -10,5 +10,5 @@ public actual suspend inline fun <T> ByteReadChannel.readExact(
     size: Int,
     block: (memory: Memory, startIndex: Int, endIndex: Int) -> T
 ): T {
-    TODO()
+    TODO("Not yet implemented")
 }

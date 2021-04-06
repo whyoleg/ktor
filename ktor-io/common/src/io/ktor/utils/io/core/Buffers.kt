@@ -18,11 +18,10 @@ public fun Buffer.readBytes(count: Int = readRemaining): ByteArray {
     return result
 }
 
-@Suppress("DEPRECATION")
-internal fun IoBuffer.releaseImpl(pool: ObjectPool<IoBuffer>) {
+internal fun ChunkBuffer.releaseImpl(pool: ObjectPool<ChunkBuffer>) {
     if (release()) {
         val origin = origin
-        if (origin is IoBuffer) {
+        if (origin is ChunkBuffer) {
             unlink()
             origin.release(pool)
         } else {

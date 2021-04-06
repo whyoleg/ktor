@@ -1,9 +1,6 @@
-@file:Suppress("NOTHING_TO_INLINE")
-
 package io.ktor.utils.io.core
 
 import io.ktor.utils.io.bits.*
-import io.ktor.utils.io.concurrent.*
 import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.errors.EOFException
 import kotlin.contracts.*

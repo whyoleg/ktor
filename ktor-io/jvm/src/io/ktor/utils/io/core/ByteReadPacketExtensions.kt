@@ -2,6 +2,7 @@
 
 package io.ktor.utils.io.core
 
+import io.ktor.utils.io.bits.*
 import io.ktor.utils.io.core.internal.*
 import io.ktor.utils.io.pool.*
 import java.nio.*
@@ -29,9 +30,7 @@ private class SingleByteBufferPool(
     val instance: ByteBuffer,
     val release: (ByteBuffer) -> Unit
 ) : SingleInstancePool<ChunkBuffer>() {
-    override fun produceInstance(): ChunkBuffer {
-        return ChunkBuffer(instance, this)
-    }
+    override fun produceInstance(): ChunkBuffer = ChunkBuffer(Memory.of(instance), null, this)
 
     override fun disposeInstance(instance: ChunkBuffer) {
         release(this.instance)
