@@ -441,7 +441,11 @@ class PipelineTest {
             pipeline.executeBlocking("start")
         } catch (cause: Throwable) {
             val stackTrace = cause.stackTrace
-            println("[stacktrace]: $stackTrace")
+            var i= -1
+            val x = stackTrace.joinToString(separator = "\n") {
+            "[${++i}]: $it"
+            }
+            println("[stacktrace]:\n ${x}")
             assertEquals(6, stackTrace.size)
 
             assertTrue("interceptor3" in stackTrace[0].toString())
