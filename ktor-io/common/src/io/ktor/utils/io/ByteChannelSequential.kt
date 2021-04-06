@@ -10,13 +10,11 @@ import kotlinx.atomicfu.locks.*
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.math.*
 
-@Deprecated("This is going to become internal. Use ByteReadChannel receiver instead.", level = DeprecationLevel.ERROR)
-public suspend fun ByteChannelSequentialBase.joinTo(dst: ByteChannelSequentialBase, closeOnEnd: Boolean) {
+internal suspend fun ByteChannelSequentialBase.joinTo(dst: ByteChannelSequentialBase, closeOnEnd: Boolean) {
     return joinToImpl(dst, closeOnEnd)
 }
 
-@Deprecated("This is going to become internal. Use ByteReadChannel receiver instead.", level = DeprecationLevel.ERROR)
-public suspend fun ByteChannelSequentialBase.copyTo(
+internal suspend fun ByteChannelSequentialBase.copyTo(
     dst: ByteChannelSequentialBase,
     limit: Long = Long.MAX_VALUE
 ): Long {
@@ -28,7 +26,6 @@ private const val EXPECTED_CAPACITY: Long = 4088L
 /**
  * Sequential (non-concurrent) byte channel implementation
  */
-@Suppress("OverridingDeprecatedMember")
 @DangerousInternalIoApi
 public abstract class ByteChannelSequentialBase(
     initial: ChunkBuffer,
@@ -64,12 +61,6 @@ public abstract class ByteChannelSequentialBase(
         get() = state.readByteOrder
         set(value) {
             state.readByteOrder = value
-        }
-
-    override var writeByteOrder: ByteOrder
-        get() = state.writeByteOrder
-        set(value) {
-            state.writeByteOrder = value
         }
 
     override val isClosedForRead: Boolean
@@ -171,15 +162,6 @@ public abstract class ByteChannelSequentialBase(
         }
     }
 
-    internal inline fun <T : Any> reverseWrite(value: () -> T, reversed: () -> T): T {
-        @Suppress("DEPRECATION_ERROR")
-        return if (writeByteOrder == ByteOrder.BIG_ENDIAN) {
-            value()
-        } else {
-            reversed()
-        }
-    }
-
     override suspend fun writePacket(packet: ByteReadPacket) {
         awaitAtLeastNBytesAvailableForWrite(1)
         val size = packet.remaining.toInt()
@@ -250,43 +232,6 @@ public abstract class ByteChannelSequentialBase(
             afterWrite(size)
             size
         }
-    }
-
-    @ExperimentalIoApi
-    @Suppress("DEPRECATION")
-    override suspend fun writeSuspendSession(visitor: suspend WriterSuspendSession.() -> Unit) {
-        val session = beginWriteSession()
-        visitor(session)
-    }
-
-    @Suppress("DEPRECATION")
-    override fun beginWriteSession(): WriterSuspendSession {
-        return object : WriterSuspendSession {
-            override fun request(min: Int): ChunkBuffer? {
-                if (availableForWrite == 0) return null
-                return writable.prepareWriteHead(min)
-            }
-
-            override fun written(n: Int) {
-                writable.afterHeadWrite()
-                afterWrite(n)
-            }
-
-            override fun flush() {
-                this@ByteChannelSequentialBase.flush()
-            }
-
-            override suspend fun tryAwait(n: Int) {
-                if (availableForWrite < n) {
-                    awaitAtLeastNBytesAvailableForWrite(n)
-                }
-            }
-        }
-    }
-
-    override fun endWriteSession(written: Int) {
-        writable.afterHeadWrite()
-        afterWrite(written)
     }
 
     internal fun checkClosed(n: Int) {

@@ -30,16 +30,6 @@ public expect interface ByteWriteChannel {
     public val autoFlush: Boolean
 
     /**
-     * Byte order that is used for multi-byte write operations
-     * (such as [writeShort], [writeInt], [writeLong], [writeFloat], and [writeDouble]).
-     */
-    @Deprecated(
-        "Setting byte order is no longer supported. Read/write in big endian and use reverseByteOrder() extensions.",
-        level = DeprecationLevel.ERROR
-    )
-    public var writeByteOrder: ByteOrder
-
-    /**
      * Number of bytes written to the channel.
      * It is not guaranteed to be atomic so could be updated in the middle of write operation.
      */
@@ -68,10 +58,6 @@ public expect interface ByteWriteChannel {
     public suspend fun writeFully(src: Buffer)
 
     public suspend fun writeFully(memory: Memory, startIndex: Int, endIndex: Int)
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Use write { } instead.")
-    public suspend fun writeSuspendSession(visitor: suspend WriterSuspendSession.() -> Unit)
 
     /**
      * Writes a [packet] fully or fails if channel get closed before the whole packet has been written
@@ -114,26 +100,29 @@ public expect interface ByteWriteChannel {
 }
 
 public suspend fun ByteWriteChannel.writeAvailable(src: ByteArray): Int = writeAvailable(src, 0, src.size)
-public suspend fun ByteWriteChannel.writeFully(src: ByteArray): Unit = writeFully(src, 0, src.size)
+
+public suspend fun ByteWriteChannel.writeFully(src: ByteArray) {
+    writeFully(src, 0, src.size)
+}
 
 public suspend fun ByteWriteChannel.writeShort(s: Int) {
-    return writeShort((s and 0xffff).toShort())
+    writeShort((s and 0xffff).toShort())
 }
 
 public suspend fun ByteWriteChannel.writeShort(s: Int, byteOrder: ByteOrder) {
-    return writeShort((s and 0xffff).toShort(), byteOrder)
+    writeShort((s and 0xffff).toShort(), byteOrder)
 }
 
 public suspend fun ByteWriteChannel.writeByte(b: Int) {
-    return writeByte((b and 0xff).toByte())
+    writeByte((b and 0xff).toByte())
 }
 
 public suspend fun ByteWriteChannel.writeInt(i: Long) {
-    return writeInt(i.toInt())
+    writeInt(i.toInt())
 }
 
 public suspend fun ByteWriteChannel.writeInt(i: Long, byteOrder: ByteOrder) {
-    return writeInt(i.toInt(), byteOrder)
+    writeInt(i.toInt(), byteOrder)
 }
 
 /**
@@ -148,16 +137,6 @@ public suspend fun ByteWriteChannel.writeStringUtf8(s: CharSequence) {
 
     return writePacket(packet)
 }
-
-/*
-TODO
-public suspend fun ByteWriteChannel.writeStringUtf8(s: CharBuffer) {
-    val packet = buildPacket {
-        writeStringUtf8(s)
-    }
-
-    return writePacket(packet)
-}*/
 
 public suspend fun ByteWriteChannel.writeStringUtf8(s: String) {
     val packet = buildPacket {
