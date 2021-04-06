@@ -433,6 +433,7 @@ class PipelineTest {
     }
 
     @Test
+    @Ignore
     fun testStackTraceWithMultipleInterceptors() {
         val pipeline = pipeline()
 
