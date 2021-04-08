@@ -26,7 +26,8 @@ public inline fun <reified T : Any> autoSerializerOf(): SessionSerializerReflect
  * Creates the the default [SessionSerializer] for class [type]
  */
 @Deprecated("Use defaultSessionSerializer<T> instead.", replaceWith = ReplaceWith("defaultSessionSerializer<T>()"))
-public fun <T : Any> autoSerializerOf(type: KClass<T>): SessionSerializerReflection<T> = SessionSerializerReflection(type)
+public fun <T : Any> autoSerializerOf(type: KClass<T>): SessionSerializerReflection<T> =
+    SessionSerializerReflection(type)
 
 /**
  * Creates the the default [SessionSerializer] for type [T]
@@ -85,7 +86,7 @@ public class SessionSerializerReflection<T : Any>(public val type: KClass<T>) : 
     private fun findConstructor(bundle: StringValues): KFunction<T> =
         type.constructors
             .filter { it.parameters.all { parameter -> parameter.name != null && parameter.name!! in bundle } }
-            .maxBy { it.parameters.size }
+            .maxByOrNull { it.parameters.size }
             ?: throw IllegalArgumentException("Couldn't instantiate type $type for parameters ${bundle.names()}")
 
     private fun assignValue(instance: T, p: KProperty1<T, *>, value: Any?) {
