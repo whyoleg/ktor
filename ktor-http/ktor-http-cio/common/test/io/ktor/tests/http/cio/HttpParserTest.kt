@@ -13,6 +13,7 @@ import kotlin.coroutines.*
 import kotlin.test.*
 
 internal const val HTAB: Char = '\u0009'
+internal const val ZERO: Char = '\u0000'
 
 class HttpParserTest {
     private var failure: Throwable? = null
@@ -164,6 +165,77 @@ class HttpParserTest {
         ).forEach {
             val response = parseResponse(ByteReadChannel(it))!!
             assertEquals("OK", response.statusText.toString())
+        }
+    }
+
+    @Test
+    fun parseHeadersDuplicates(): Unit = test {
+        val encodedHeaders = """
+            name:value
+            aaa:111
+            bbb:222
+            name:value2
+            bbb:zzz
+        """.trimIndent() + "\r\n\r\n"
+        val channel = ByteReadChannel(encodedHeaders)
+        val headers = parseHeaders(channel)
+
+        try {
+            assertEquals(5, headers.size)
+            assertEquals("value", headers["name"].toString())
+            assertEquals("111", headers["aaa"].toString())
+            assertEquals("222", headers["bbb"].toString())
+            assertEquals(listOf("value", "value2"), headers.getAll("name").mapTo(ArrayList()) { it.toString() })
+            assertEquals(listOf("222", "zzz"), headers.getAll("bbb").mapTo(ArrayList()) { it.toString() })
+        } finally {
+            headers.release()
+        }
+    }
+
+    @Test
+    fun parseHeadersManyHeaders(): Unit = test {
+        val encodedHeaders = generateSequence { "header:value" }.take(1000).joinToString("\r\n", postfix = "\r\n\r\n")
+        val channel = ByteReadChannel(encodedHeaders)
+        val headers = parseHeaders(channel)
+
+        try {
+            assertEquals(1000, headers.size)
+            assertEquals("value", headers["header"].toString())
+            assertEquals(1000, headers.getAll("header").count())
+        } finally {
+            headers.release()
+        }
+    }
+
+    @Test
+    fun parseHeadersTooManyHeaders(): Unit = test {
+        val encodedHeaders = generateSequence { "header:value" }.take(2000).joinToString("\r\n", postfix = "\r\n\r\n")
+        val channel = ByteReadChannel(encodedHeaders)
+
+        assertFailsWith<IllegalStateException> {
+            parseHeaders(channel)
+        }.let { cause ->
+            assertEquals("Headers count limit 1024 exceeded.", cause.message)
+        }
+    }
+
+    @Test
+    fun parseHeadersCollisions(): Unit = test {
+        val encodedHeaders = """
+            a__b:value,
+            ${ZERO}name:value2
+        """.trimIndent() + "\r\n\r\n"
+        val channel = ByteReadChannel(encodedHeaders)
+        val headers = parseHeaders(channel)
+
+        try {
+            assertEquals(2, headers.size)
+            assertEquals("value", headers["name"].toString())
+            assertEquals("value2", headers["\u0000name"].toString())
+            assertEquals(1, headers.getAll("name").count())
+            assertEquals(1, headers.getAll("\u0000name").count())
+        } finally {
+            headers.release()
         }
     }
 

@@ -10,6 +10,7 @@ import io.ktor.utils.io.pool.*
 import kotlin.native.concurrent.*
 
 private const val EXPECTED_HEADERS_QTY = 64
+private const val MAX_HEADERS_QTY = 256
 
 /*
  * index array structure
@@ -34,6 +35,9 @@ private val EMPTY_INT_ARRAY = IntArray(0)
 @Suppress("KDocMissingDocumentation")
 @InternalAPI
 public class HttpHeadersMap internal constructor(private val builder: CharArrayBuilder) {
+    /**
+     * Number of entries in the map including duplicates with the same name.
+     */
     public var size: Int = 0
         private set
 
@@ -50,7 +54,10 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
         val base = size * HEADER_SIZE
         val array = indexes
 
-        if (base >= indexes.size) TODO("Implement headers overflow")
+        if (base >= array.size) {
+            growIndexesArray()
+            return put(nameHash, valueHash, nameStartIndex, nameEndIndex, valueStartIndex, valueEndIndex)
+        }
 
         array[base + 0] = nameHash
         array[base + 1] = valueHash
@@ -58,17 +65,34 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
         array[base + 3] = nameEndIndex
         array[base + 4] = valueStartIndex
         array[base + 5] = valueEndIndex
-        array[base + 6] = -1 // TODO
+        array[base + 6] = -1
         array[base + 7] = -1
+
+        val last = lastBaseOf(nameStartIndex, nameEndIndex, nameHash)
+        if (last != -1) {
+            array[last + 6] = base
+        }
 
         size++
     }
 
+    private fun growIndexesArray() {
+        if (indexes.size / HEADER_SIZE >= MAX_HEADERS_QTY) {
+            throw IllegalStateException("Headers count limit $MAX_HEADERS_QTY exceeded.")
+        }
+
+        val biggerArray = IntArray(indexes.size * 2)
+        indexes.copyInto(biggerArray)
+        indexes = biggerArray
+    }
+
     public fun find(name: String, fromIndex: Int = 0): Int {
+        require(fromIndex in 0..size)
+
         val nameHash = name.hashCodeLowerCase()
         for (i in fromIndex until size) {
             val offset = i * HEADER_SIZE
-            if (indexes[offset] == nameHash) {
+            if (indexes[offset] == nameHash && headerNameEqualsAt(offset, name)) {
                 return i
             }
         }
@@ -80,8 +104,8 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
         val nameHash = name.hashCodeLowerCase()
         for (i in 0 until size) {
             val offset = i * HEADER_SIZE
-            if (indexes[offset] == nameHash) {
-                return builder.subSequence(indexes[offset + 4], indexes[offset + 5])
+            if (indexes[offset] == nameHash && headerNameEqualsAt(offset, name)) {
+                return valueAtOffset(offset)
             }
         }
 
@@ -90,10 +114,13 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
 
     public fun getAll(name: String): Sequence<CharSequence> {
         val nameHash = name.hashCodeLowerCase()
-        return generateSequence(0) { if (it + 1 >= size) null else it + 1 }
-            .map { it * HEADER_SIZE }
-            .filter { indexes[it] == nameHash }
-            .map { builder.subSequence(indexes[it + 4], indexes[it + 5]) }
+        return sequence {
+            var offset = firstBaseOf(name, nameHash)
+            while (offset != -1) {
+                yield(valueAtOffset(offset))
+                offset = indexes[offset + 6]
+            }
+        }
     }
 
     public fun nameAt(idx: Int): CharSequence {
@@ -114,12 +141,7 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
         require(idx < size)
 
         val offset = idx * HEADER_SIZE
-        val array = indexes
-
-        val nameStart = array[offset + 4]
-        val nameEnd = array[offset + 5]
-
-        return builder.subSequence(nameStart, nameEnd)
+        return valueAtOffset(offset)
     }
 
     public fun release() {
@@ -127,11 +149,62 @@ public class HttpHeadersMap internal constructor(private val builder: CharArrayB
         val indexes = indexes
         this.indexes = EMPTY_INT_ARRAY
 
-        if (indexes !== EMPTY_INT_ARRAY) IntArrayPool.recycle(indexes)
+        if (indexes !== EMPTY_INT_ARRAY && indexes.size == EXPECTED_HEADERS_QTY * HEADER_SIZE) {
+            IntArrayPool.recycle(indexes)
+        }
     }
 
     override fun toString(): String {
         return buildString { dumpTo("", this) }
+    }
+
+    /**
+     * Return the multiplied index of the first entry corresponding to the [name] header.
+     */
+    private fun firstBaseOf(name: String, nameHash: Int): Int {
+        val size = size
+        if (size == 0) return -1
+
+        val indexes = indexes
+        for (offset in 0 until size * HEADER_SIZE step HEADER_SIZE) {
+            if (indexes[offset] == nameHash && headerNameEqualsAt(offset, name)) {
+                return offset
+            }
+        }
+
+        return -1
+    }
+
+    /**
+     * Return the multiplied index of the last entry corresponding to the particular header.
+     */
+    private fun lastBaseOf(nameStartIndex: Int, nameEndIndex: Int, nameHash: Int): Int {
+        val indexes = indexes
+        val name = builder.subSequence(nameStartIndex, nameEndIndex)
+
+        for (offset in (size - 1) * HEADER_SIZE downTo 0 step HEADER_SIZE) {
+            if (indexes[offset] == nameHash && headerNameEqualsAt(offset, name)) {
+                return offset
+            }
+        }
+
+        return -1
+    }
+
+    private fun headerNameEqualsAt(offset: Int, name: CharSequence): Boolean {
+        val nameStart = indexes[offset + 2]
+        val nameEnd = indexes[offset + 3]
+
+        return builder.equalsLowerCase(nameStart, nameEnd, name)
+    }
+
+    private fun valueAtOffset(offset: Int): CharSequence {
+        val array = indexes
+
+        val nameStart = array[offset + 4]
+        val nameEnd = array[offset + 5]
+
+        return builder.subSequence(nameStart, nameEnd)
     }
 }
 
