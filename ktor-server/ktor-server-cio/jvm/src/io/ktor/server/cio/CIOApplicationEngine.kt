@@ -9,6 +9,7 @@ import io.ktor.http.cio.*
 import io.ktor.server.cio.backend.*
 import io.ktor.server.engine.*
 import io.ktor.util.*
+import io.ktor.util.network.*
 import io.ktor.util.pipeline.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.scheduling.*
@@ -34,7 +35,7 @@ public class CIOApplicationEngine(environment: ApplicationEngineEnvironment, con
 
     private val corePoolSize: Int = maxOf(
         configuration.connectionGroupSize + configuration.workerGroupSize,
-        environment.connectors.size + 1 // number of selectors + 1
+        environment.connectorsConfig.size + 1 // number of selectors + 1
     )
 
     @OptIn(InternalCoroutinesApi::class)
@@ -49,10 +50,10 @@ public class CIOApplicationEngine(environment: ApplicationEngineEnvironment, con
     private val serverJob = CoroutineScope(
         environment.parentCoroutineContext + engineDispatcher
     ).launch(start = CoroutineStart.LAZY) {
-        val connectors = ArrayList<HttpServer>(environment.connectors.size)
+        val connectors = ArrayList<HttpServer>(environment.connectorsConfig.size)
 
         try {
-            environment.connectors.forEach { connectorSpec ->
+            environment.connectorsConfig.forEach { connectorSpec ->
                 if (connectorSpec.type == ConnectorType.HTTPS) {
                     throw UnsupportedOperationException(
                         "CIO Engine does not currently support HTTPS. Please " +
@@ -65,9 +66,22 @@ public class CIOApplicationEngine(environment: ApplicationEngineEnvironment, con
                 environment.start()
             }
 
-            environment.connectors.forEach { connectorSpec ->
+            environment.connectorsConfig.forEach { connectorSpec ->
                 val connector = startConnector(connectorSpec.host, connectorSpec.port)
                 connectors.add(connector)
+            }
+
+            @OptIn(ExperimentalCoroutinesApi::class)
+            connectors.forEachIndexed { index, server ->
+                server.serverSocket.invokeOnCompletion { cause ->
+                    if (cause == null) {
+                        val port = server.serverSocket.getCompleted().localAddress.port
+                        if (port > 0) {
+                            val config = environment.connectorsConfig[index]
+                            onConnectorStarted(config.type, config.host, port)
+                        }
+                    }
+                }
             }
 
             connectors.map { it.serverSocket }.awaitAll()
@@ -186,5 +200,12 @@ public class CIOApplicationEngine(environment: ApplicationEngineEnvironment, con
                 call.release()
             }
         }
+    }
+
+    private fun onConnectorStarted(type: ConnectorType, host: String, port: Int) {
+        application.environment.monitor.raise(
+            EngineConnectorStarted,
+            EngineConnectorInfo(type, host, port)
+        )
     }
 }

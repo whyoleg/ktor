@@ -37,8 +37,15 @@ public abstract class BaseApplicationEngine(
             it.sendPipeline.installDefaultTransformations()
             it.installDefaultInterceptors()
         }
+
+        val connectors = ArrayList<EngineConnectorInfo>()
+        environment.monitor.subscribe(EngineConnectorStarted) {
+            connectors.add(it)
+            application.attributes.put(StartedConnectorsAttributeKey, connectors.toList())
+        }
+
         environment.monitor.subscribe(ApplicationStarted) {
-            environment.connectors.forEach {
+            connectors.forEach {
                 environment.log.info("Responding at ${it.type.name.toLowerCase()}://${it.host}:${it.port}")
             }
         }

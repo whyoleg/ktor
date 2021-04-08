@@ -64,7 +64,7 @@ public class TomcatApplicationEngine(environment: ApplicationEngineEnvironment, 
                 removeConnector(existing)
             }
 
-            environment.connectors.forEach { ktorConnector ->
+            environment.connectorsConfig.forEach { ktorConnector ->
                 addConnector(
                     Connector().apply {
                         port = ktorConnector.port

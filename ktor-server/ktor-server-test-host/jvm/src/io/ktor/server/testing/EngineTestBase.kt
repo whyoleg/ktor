@@ -214,7 +214,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
             server.start(wait = false)
 
             withTimeout(TimeUnit.SECONDS.toMillis(minOf(10, timeout))) {
-                server.environment.connectors.forEach { connector ->
+                server.environment.connectorsConfig.forEach { connector ->
                     waitForPort(connector.port)
                 }
             }

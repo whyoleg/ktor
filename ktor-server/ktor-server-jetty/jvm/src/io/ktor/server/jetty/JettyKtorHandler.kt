@@ -32,7 +32,7 @@ internal class JettyKtorHandler(
     private val engineDispatcher: CoroutineDispatcher,
     configuration: JettyApplicationEngineBase.Configuration
 ) : AbstractHandler(), CoroutineScope {
-    private val environmentName = environment.connectors.joinToString("-") { it.port.toString() }
+    private val environmentName = environment.connectorsConfig.joinToString("-") { it.port.toString() }
     private val queue: BlockingQueue<Runnable> = LinkedBlockingQueue()
     private val executor = ThreadPoolExecutor(
         configuration.callGroupSize,

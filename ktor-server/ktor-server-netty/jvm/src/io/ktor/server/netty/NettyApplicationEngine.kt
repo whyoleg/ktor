@@ -128,7 +128,7 @@ public class NettyApplicationEngine(
 
     private var channels: List<Channel>? = null
     private val bootstraps: List<ServerBootstrap> by lazy {
-        environment.connectors.map(::createBootstrap)
+        environment.connectorsConfig.map(::createBootstrap)
     }
 
     private fun createBootstrap(connector: EngineConnectorConfig): ServerBootstrap {
@@ -173,7 +173,7 @@ public class NettyApplicationEngine(
     override fun start(wait: Boolean): NettyApplicationEngine {
         environment.start()
 
-        channels = bootstraps.zip(environment.connectors)
+        channels = bootstraps.zip(environment.connectorsConfig)
             .map { it.first.bind(it.second.host, it.second.port) }
             .map { it.sync().channel() }
 

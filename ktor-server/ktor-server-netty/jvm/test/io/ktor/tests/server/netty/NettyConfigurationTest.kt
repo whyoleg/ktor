@@ -26,7 +26,7 @@ class NettyConfigurationTest {
         every { env.monitor } returns events
         every { env.stop() } just Runs
         every { env.start() } just Runs
-        every { env.connectors } returns listOf(EngineConnectorBuilder())
+        every { env.connectorsConfig } returns listOf(EngineConnectorBuilder())
         every { env.parentCoroutineContext } returns Dispatchers.Default
         return env
     }

@@ -28,19 +28,19 @@ class CommandLineTest {
 
     @Test
     fun testChangePort() {
-        assertEquals(13698, commandLineEnvironment(arrayOf("-port=13698")).connectors.single().port)
+        assertEquals(13698, commandLineEnvironment(arrayOf("-port=13698")).connectorsConfig.single().port)
     }
 
     @Test
     fun testAmendConfig() {
-        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectors.single().port)
+        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port)
     }
 
     @Test
     fun testPropertyConfig() {
         System.setProperty("ktor.deployment.port", "1333")
         ConfigFactory.invalidateCaches()
-        assertEquals(1333, commandLineEnvironment(emptyArray()).connectors.single().port)
+        assertEquals(1333, commandLineEnvironment(emptyArray()).connectorsConfig.single().port)
         System.clearProperty("ktor.deployment.port")
         ConfigFactory.invalidateCaches()
     }
@@ -49,14 +49,14 @@ class CommandLineTest {
     fun testPropertyConfigOverride() {
         System.setProperty("ktor.deployment.port", "1333")
         ConfigFactory.invalidateCaches()
-        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectors.single().port)
+        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port)
         System.clearProperty("ktor.deployment.port")
         ConfigFactory.invalidateCaches()
     }
 
     @Test
     fun testChangeHost() {
-        assertEquals("test-server", commandLineEnvironment(arrayOf("-host=test-server")).connectors.single().host)
+        assertEquals("test-server", commandLineEnvironment(arrayOf("-host=test-server")).connectorsConfig.single().host)
     }
 
     @Test
@@ -79,7 +79,7 @@ class CommandLineTest {
 
     @Test
     fun configFileWithEnvironmentVariables() {
-        val configPath = CommandLineTest::class.java.classLoader.getResource("applicationWithEnv.conf").toURI().path
+        val configPath = CommandLineTest::class.java.classLoader.getResource("applicationWithEnv.conf")!!.toURI().path
         val port = commandLineEnvironment(arrayOf("-config=$configPath"))
             .config.property("ktor.deployment.port").getString()
         assertEquals("8080", port)

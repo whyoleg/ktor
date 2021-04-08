@@ -6,7 +6,7 @@ package io.ktor.server.engine
 
 import io.ktor.application.*
 import io.ktor.config.*
-import io.ktor.util.PlatformUtils
+import io.ktor.util.*
 import org.slf4j.*
 import kotlin.coroutines.*
 
@@ -17,12 +17,15 @@ public interface ApplicationEngineEnvironment : ApplicationEnvironment {
     /**
      * Connectors that describers where and how server should listen.
      */
+    @Deprecated("Use startedConnectors or connectorsConfig instead.",
+        replaceWith = ReplaceWith("connectorsConfig")
+    )
     public val connectors: List<EngineConnectorConfig>
 
     /**
      * Running [Application].
      *
-     * @throws an exception if environment has not been started.
+     * @throws IllegalStateException if environment has not been started.
      */
     public val application: Application
 

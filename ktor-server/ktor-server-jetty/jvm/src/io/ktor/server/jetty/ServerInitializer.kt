@@ -13,7 +13,7 @@ import org.eclipse.jetty.server.*
 import org.eclipse.jetty.util.ssl.*
 
 internal fun Server.initializeServer(environment: ApplicationEngineEnvironment) {
-    environment.connectors.map { ktorConnector ->
+    environment.connectorsConfig.map { ktorConnector ->
         val httpConfig = HttpConfiguration().apply {
             sendServerVersion = false
             sendDateHeader = false
