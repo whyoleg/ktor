@@ -17,7 +17,8 @@ public interface ApplicationEngineEnvironment : ApplicationEnvironment {
     /**
      * Connectors that describers where and how server should listen.
      */
-    @Deprecated("Use startedConnectors or connectorsConfig instead.",
+    @Deprecated(
+        "Use startedConnectors or connectorsConfig instead.",
         replaceWith = ReplaceWith("connectorsConfig")
     )
     public val connectors: List<EngineConnectorConfig>

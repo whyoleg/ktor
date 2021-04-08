@@ -6,7 +6,6 @@ package io.ktor.tests.hosts
 
 import com.typesafe.config.*
 import io.ktor.server.engine.*
-import org.junit.*
 import org.junit.rules.*
 import org.junit.runner.*
 import org.junit.runners.model.*
@@ -14,11 +13,10 @@ import java.io.*
 import java.net.*
 import java.util.*
 import kotlin.test.*
-import kotlin.test.Test
 
 class CommandLineTest {
 
-    @get:Rule
+    @get:org.junit.Rule
     var classLoader = IsolatedClassLoaderRule()
 
     @Test
@@ -33,7 +31,10 @@ class CommandLineTest {
 
     @Test
     fun testAmendConfig() {
-        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port)
+        assertEquals(
+            13698,
+            commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port
+        )
     }
 
     @Test
@@ -49,7 +50,10 @@ class CommandLineTest {
     fun testPropertyConfigOverride() {
         System.setProperty("ktor.deployment.port", "1333")
         ConfigFactory.invalidateCaches()
-        assertEquals(13698, commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port)
+        assertEquals(
+            13698,
+            commandLineEnvironment(arrayOf("-P:ktor.deployment.port=13698")).connectorsConfig.single().port
+        )
         System.clearProperty("ktor.deployment.port")
         ConfigFactory.invalidateCaches()
     }
