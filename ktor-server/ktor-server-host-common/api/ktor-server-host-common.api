@@ -242,7 +242,18 @@ public abstract interface class io/ktor/server/engine/EngineConnectorConfig {
 
 public final class io/ktor/server/engine/EngineConnectorConfigKt {
 	public static final fun connector (Lio/ktor/server/engine/ApplicationEngineEnvironmentBuilder;Lkotlin/jvm/functions/Function1;)V
+	public static final fun getConnectorsConfig (Lio/ktor/server/engine/ApplicationEngineEnvironment;)Ljava/util/List;
+	public static final fun getEngineConnectorStarted ()Lio/ktor/application/EventDefinition;
+	public static final fun getStartedConnectors (Lio/ktor/application/ApplicationEnvironment;)Ljava/util/List;
+	public static final fun randomPort (Lio/ktor/server/engine/EngineConnectorBuilder;)V
 	public static final fun sslConnector (Lio/ktor/server/engine/ApplicationEngineEnvironmentBuilder;Ljava/security/KeyStore;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/ktor/server/engine/EngineConnectorInfo {
+	public fun <init> (Lio/ktor/server/engine/ConnectorType;Ljava/lang/String;I)V
+	public final fun getHost ()Ljava/lang/String;
+	public final fun getPort ()I
+	public final fun getType ()Lio/ktor/server/engine/ConnectorType;
 }
 
 public final class io/ktor/server/engine/EngineContextCancellationHelperKt {
