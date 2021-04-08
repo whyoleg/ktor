@@ -13,10 +13,10 @@ class CIOConfigTest {
     fun connectRetryAttemptsShouldDelegateToConnectAttempts() {
         val config = CIOEngineConfig()
 
-        config.endpoint { connectRetryAttempts = 3 }
+        config.endpoint { connectAttempts = 3 }
         assertEquals(3, config.endpoint.connectAttempts)
 
         config.endpoint { connectAttempts = 5 }
-        assertEquals(5, config.endpoint.connectRetryAttempts)
+        assertEquals(5, config.endpoint.connectAttempts)
     }
 }

@@ -17,6 +17,7 @@ import io.ktor.util.date.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.*
 import okhttp3.*
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.http.HttpMethod
 import okio.*
 import java.io.*
@@ -195,13 +196,13 @@ private fun HttpRequestData.convertToOkHttpRequest(callContext: CoroutineContext
     return builder.build()
 }
 
-internal fun OutgoingContent.convertToOkHttpBody(callContext: CoroutineContext): RequestBody? = when (this) {
-    is OutgoingContent.ByteArrayContent -> RequestBody.create(null, bytes())
+internal fun OutgoingContent.convertToOkHttpBody(callContext: CoroutineContext): RequestBody = when (this) {
+    is OutgoingContent.ByteArrayContent -> bytes().let { it.toRequestBody(null, 0, it.size) }
     is OutgoingContent.ReadChannelContent -> StreamRequestBody(contentLength) { readFrom() }
     is OutgoingContent.WriteChannelContent -> {
         StreamRequestBody(contentLength) { GlobalScope.writer(callContext) { writeTo(channel) }.channel }
     }
-    is OutgoingContent.NoContent -> RequestBody.create(null, ByteArray(0))
+    is OutgoingContent.NoContent -> ByteArray(0).toRequestBody(null, 0, 0)
     else -> throw UnsupportedContentTypeException(this)
 }
 

@@ -13,6 +13,7 @@ import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.charsets.*
+import kotlin.reflect.jvm.*
 import kotlin.text.Charsets
 
 /**
@@ -155,7 +156,7 @@ public class ContentNegotiation(
                 // skip if already transformed
                 if (subject.value !is ByteReadChannel) return@intercept
                 // skip if a byte channel has been requested so there is nothing to negotiate
-                if (subject.type == ByteReadChannel::class) return@intercept
+                if (subject.typeInfo.jvmErasure == ByteReadChannel::class) return@intercept
 
                 val requestContentType = try {
                     call.request.contentType().withoutParameters()

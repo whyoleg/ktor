@@ -79,7 +79,11 @@ public fun ApplicationReceivePipeline.installDefaultTransformations() {
             else -> null
         }
         if (transformed != null) {
-            proceedWith(ApplicationReceiveRequest(query.typeInfo, transformed, query.type in ReusableTypes))
+            proceedWith(
+                ApplicationReceiveRequest(
+                    query.typeInfo, transformed, query.typeInfo.jvmErasure in ReusableTypes
+                )
+            )
         }
     }
 }

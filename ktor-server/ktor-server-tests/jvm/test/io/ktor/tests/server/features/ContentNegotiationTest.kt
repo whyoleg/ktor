@@ -15,6 +15,7 @@ import io.ktor.server.testing.*
 import io.ktor.util.pipeline.*
 import io.ktor.utils.io.*
 import java.io.*
+import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 class ContentNegotiationTest {
@@ -33,7 +34,7 @@ class ContentNegotiationTest {
         override suspend fun convertForReceive(
             context: PipelineContext<ApplicationReceiveRequest, ApplicationCall>
         ): Any? {
-            val type = context.subject.type
+            val type = context.subject.typeInfo.jvmErasure
             val channel = context.subject.value
             if (type != Wrapper::class || channel !is ByteReadChannel) return null
             return Wrapper(channel.readRemaining().readText().removeSurrounding("[", "]"))
@@ -53,7 +54,7 @@ class ContentNegotiationTest {
         override suspend fun convertForReceive(
             context: PipelineContext<ApplicationReceiveRequest, ApplicationCall>
         ): Any? {
-            val type = context.subject.type
+            val type = context.subject.typeInfo.jvmErasure
             val incoming = context.subject.value
             if (type != Wrapper::class || incoming !is ByteReadChannel) return null
             return Wrapper(incoming.readRemaining().readText())

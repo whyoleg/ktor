@@ -12,6 +12,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.testing.*
 import io.ktor.utils.io.*
+import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 class ApplicationRequestContentTest {
@@ -117,7 +118,7 @@ class ApplicationRequestContentTest {
             val value = IntList(listOf(1, 2, 3, 4))
 
             application.receivePipeline.intercept(ApplicationReceivePipeline.Transform) { query ->
-                if (query.type != IntList::class) return@intercept
+                if (query.typeInfo.jvmErasure != IntList::class) return@intercept
                 val message = query.value as? ByteReadChannel ?: return@intercept
 
                 val string = message.readRemaining().readText()
@@ -126,7 +127,7 @@ class ApplicationRequestContentTest {
             }
 
             application.intercept(ApplicationCallPipeline.Call) {
-                assertEquals(value, call.receive<IntList>())
+                assertEquals(value, call.receive())
             }
 
             handleRequest(HttpMethod.Get, "") {
@@ -164,9 +165,7 @@ class ApplicationRequestContentTest {
             }
         }
 
-        handleRequest(HttpMethod.Get, "/").let { call ->
-            assertEquals(415, call.response.status()?.value)
-        }
+        assertEquals(415, handleRequest(HttpMethod.Get, "/").response.status()?.value)
     }
 
     @Test
@@ -180,9 +179,7 @@ class ApplicationRequestContentTest {
             }
         }
 
-        handleRequest(HttpMethod.Get, "/").let { call ->
-            assertEquals(200, call.response.status()?.value)
-        }
+        assertEquals(200, handleRequest(HttpMethod.Get, "/").response.status()?.value)
     }
 
     @Test
@@ -276,7 +273,7 @@ class ApplicationRequestContentTest {
         application.install(DoubleReceive)
 
         application.receivePipeline.intercept(ApplicationReceivePipeline.Transform) {
-            if (it.type == IntList::class) {
+            if (it.typeInfo.jvmErasure == IntList::class) {
                 throw MySpecialException()
             }
         }

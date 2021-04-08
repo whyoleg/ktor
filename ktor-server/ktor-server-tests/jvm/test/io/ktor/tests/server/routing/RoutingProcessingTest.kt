@@ -10,6 +10,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.testing.*
+import kotlin.reflect.jvm.*
 import kotlin.test.*
 
 private enum class SelectedRoute { Get, Param, Header, None }
@@ -418,10 +419,10 @@ class RoutingProcessingTest {
                 receivePipeline.intercept(ApplicationReceivePipeline.Transform) {
                     userIntercepted = true
                     routingInterceptorWrapped = wrappedWithInterceptor
-                    proceedWith(ApplicationReceiveRequest(it.type, Foo()))
+                    proceedWith(ApplicationReceiveRequest(it.typeInfo, Foo()))
                 }
                 get("{username}") {
-                    instance = call.receive<Foo>()
+                    instance = call.receive()
                 }
             }
         }

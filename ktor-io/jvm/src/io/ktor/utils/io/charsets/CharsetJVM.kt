@@ -33,7 +33,7 @@ private fun CharsetEncoder.encodeToByteArraySlow(input: CharSequence, fromIndex:
     val result = encode(CharBuffer.wrap(input, fromIndex, toIndex))
 
     val existingArray = when {
-        result.hasArray() && result.arrayOffset() == 0 -> result.array()?.takeIf { it.size == result.remaining() }
+        result.hasArray() && result.arrayOffset() == 0 -> result.array().takeIf { it.size == result.remaining() }
         else -> null
     }
 
@@ -63,7 +63,7 @@ public actual fun CharsetEncoder.encodeUTF8(input: ByteReadPacket, dst: Output) 
 
     try {
         tmp.writeDirect(0) { tmpBb ->
-            val cb = tmpBb.asCharBuffer()!!
+            val cb = tmpBb.asCharBuffer()
 
             while (input.remaining > 0) {
                 cb.clear()
@@ -147,7 +147,7 @@ internal actual fun CharsetDecoder.decodeBuffer(
     var charactersCopied = 0
     input.readDirect { bb ->
         val tmpBuffer = ChunkBuffer.Pool.borrow()
-        val cb = tmpBuffer.memory.buffer.asCharBuffer()!!
+        val cb = tmpBuffer.memory.buffer.asCharBuffer()
 
         try {
             while (bb.hasRemaining() && charactersCopied < max) {
@@ -339,5 +339,5 @@ actual constructor(message: String) : java.nio.charset.MalformedInputException(0
         get() = _message
 }
 
-private val EmptyCharBuffer = CharBuffer.allocate(0)!!
+private val EmptyCharBuffer = CharBuffer.allocate(0)
 private val EmptyByteBuffer = ByteBuffer.allocate(0)!!

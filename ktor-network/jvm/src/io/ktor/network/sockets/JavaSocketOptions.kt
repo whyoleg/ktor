@@ -28,7 +28,7 @@ internal object SocketOptionsPlatformCapabilities {
     }
 
     private val channelSetOption: Method? = try {
-        val socketOptionType = Class.forName("java.net.SocketOption")!!
+        val socketOptionType = Class.forName("java.net.SocketOption")
         val socketChannelClass = Class.forName("java.nio.channels.SocketChannel")
 
         socketChannelClass.methods.firstOrNull { method ->
@@ -45,7 +45,7 @@ internal object SocketOptionsPlatformCapabilities {
     }
 
     private val serverChannelSetOption: Method? = try {
-        val socketOptionType = Class.forName("java.net.SocketOption")!!
+        val socketOptionType = Class.forName("java.net.SocketOption")
         val socketChannelClass = Class.forName("java.nio.channels.ServerSocketChannel")
 
         socketChannelClass.methods.firstOrNull { method ->
@@ -63,7 +63,7 @@ internal object SocketOptionsPlatformCapabilities {
     }
 
     private val datagramSetOption: Method? = try {
-        val socketOptionType = Class.forName("java.net.SocketOption")!!
+        val socketOptionType = Class.forName("java.net.SocketOption")
         val socketChannelClass = Class.forName("java.nio.channels.DatagramChannel")
 
         socketChannelClass.methods.firstOrNull { method ->

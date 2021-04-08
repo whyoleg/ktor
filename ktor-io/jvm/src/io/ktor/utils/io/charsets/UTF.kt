@@ -129,7 +129,7 @@ private fun ByteBuffer.decodeUTF8Line_buffer(out: CharArray, offset: Int, length
  * @see [decodeUtf8Result]
  */
 private fun ByteBuffer.decodeUTF8_array(out: CharArray, offset: Int, length: Int): Long {
-    val array = array()!!
+    val array = array()
     var srcPos = arrayOffset() + position()
     val srcEnd = srcPos + remaining()
 
@@ -311,7 +311,7 @@ private inline fun ByteBuffer.decodeUTF8_array(
     length: Int,
     predicate: (Char) -> Boolean
 ): Long {
-    val array = array()!!
+    val array = array()
     var srcPos = arrayOffset() + position()
     val srcEnd = srcPos + remaining()
 

@@ -10,6 +10,7 @@ import io.ktor.request.*
 import io.ktor.util.*
 import io.ktor.utils.io.*
 import kotlin.reflect.*
+import kotlin.reflect.jvm.*
 
 /**
  * This feature provides ability to invoke [ApplicationCall.receive] several times.
@@ -51,7 +52,7 @@ public class DoubleReceive internal constructor(private val config: Configuratio
 
             pipeline.receivePipeline.intercept(ApplicationReceivePipeline.Before) { request ->
                 val type = request.typeInfo
-                require(request.type != CachedTransformationResult::class) {
+                require(request.typeInfo.jvmErasure != CachedTransformationResult::class) {
                     "CachedTransformationResult can't be received"
                 }
 
@@ -92,7 +93,7 @@ public class DoubleReceive internal constructor(private val config: Configuratio
 
                 when {
                     transformed is CachedTransformationResult.Success<*> -> throw RequestAlreadyConsumedException()
-                    !request.type.isInstance(transformed) -> throw CannotTransformContentToTypeException(type)
+                    !request.typeInfo.jvmErasure.isInstance(transformed) -> throw CannotTransformContentToTypeException(type)
                 }
 
                 if (finishedRequest.reusableValue &&
