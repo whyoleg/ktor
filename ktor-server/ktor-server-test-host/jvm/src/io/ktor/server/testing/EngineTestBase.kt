@@ -16,6 +16,7 @@ import io.ktor.network.tls.certificates.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.util.*
+import kotlinx.atomicfu.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.debug.junit4.*
 import org.eclipse.jetty.util.ssl.*
@@ -26,8 +27,11 @@ import org.slf4j.*
 import java.io.*
 import java.net.*
 import java.security.*
+import java.util.*
 import java.util.concurrent.*
 import javax.net.ssl.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 import kotlin.concurrent.*
 import kotlin.coroutines.*
 import kotlin.test.*
@@ -212,12 +216,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
         // as far as we have retry loop on call side
         val starting = GlobalScope.async(testDispatcher) {
             server.start(wait = false)
-
-            withTimeout(TimeUnit.SECONDS.toMillis(minOf(10, timeout))) {
-                server.environment.connectorsConfig.forEach { connector ->
-                    waitForPort(connector.port)
-                }
-            }
+            waitForStartup(server, timeout)
         }
 
         return try {
@@ -251,7 +250,7 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
         return false
     }
 
-    protected fun findFreePort(): Int = FreePorts.select()
+    protected open fun findFreePort(): Int = FreePorts.select()
 
     protected fun withUrl(
         path: String,
@@ -342,17 +341,6 @@ public abstract class EngineTestBase<TEngine : ApplicationEngine, TConfiguration
             sslContext = SSLContext.getInstance("TLS")
             sslContext.init(null, tmf.trustManagers, null)
             trustManager = tmf.trustManagers.first { it is X509TrustManager } as X509TrustManager
-        }
-
-        private suspend fun waitForPort(port: Int) {
-            do {
-                delay(50)
-                try {
-                    Socket("localhost", port).close()
-                    break
-                } catch (expected: IOException) {
-                }
-            } while (true)
         }
     }
 }
