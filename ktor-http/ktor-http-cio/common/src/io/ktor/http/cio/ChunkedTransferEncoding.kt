@@ -45,7 +45,7 @@ public fun CoroutineScope.decodeChunked(input: ByteReadChannel): DecoderJob =
  */
 public fun CoroutineScope.decodeChunked(input: ByteReadChannel, contentLength: Long): DecoderJob =
     writer(coroutineContext) {
-        decodeChunked(input, channel, contentLength)
+        decodeChunked(input, channel)
     }
 
 
@@ -56,7 +56,7 @@ public fun CoroutineScope.decodeChunked(input: ByteReadChannel, contentLength: L
  * @throws ParserException if the format is invalid.
  */
 public suspend fun decodeChunked(input: ByteReadChannel, out: ByteWriteChannel) {
-    return decodeChunked(input, out, -1L)
+    return decodeChunked(input, out)
 }
 
 /**
