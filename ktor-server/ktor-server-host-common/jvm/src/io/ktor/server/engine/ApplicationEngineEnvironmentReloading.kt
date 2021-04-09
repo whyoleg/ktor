@@ -79,12 +79,15 @@ public class ApplicationEngineEnvironmentReloading(
      * Reload application: destroy it first and then create again
      */
     public fun reload() {
-        applicationInstanceLock.write {
+        val instance = applicationInstanceLock.write {
             destroyApplication()
             val (application, classLoader) = createApplication()
             _applicationInstance = application
             _applicationClassLoader = classLoader
+            application
         }
+
+        safeRiseEvent(ApplicationStarted, instance)
     }
 
     private fun currentApplication(): Application = applicationInstanceLock.read {
@@ -123,7 +126,11 @@ public class ApplicationEngineEnvironmentReloading(
             _applicationClassLoader = classLoader
         }
 
-        return@read _applicationInstance ?: error("ApplicationEngineEnvironment was not started")
+        val instance = _applicationInstance ?: error("ApplicationEngineEnvironment was not started")
+
+        safeRiseEvent(ApplicationStarted, instance )
+
+        return@read instance
     }
 
     private fun createApplication(): Pair<Application, ClassLoader> {
@@ -263,7 +270,7 @@ public class ApplicationEngineEnvironmentReloading(
     }
 
     override fun start() {
-        applicationInstanceLock.write {
+        val instance = applicationInstanceLock.write {
             val (application, classLoader) = try {
                 createApplication()
             } catch (cause: Throwable) {
@@ -276,7 +283,11 @@ public class ApplicationEngineEnvironmentReloading(
             }
             _applicationInstance = application
             _applicationClassLoader = classLoader
+
+            application
         }
+
+        safeRiseEvent(ApplicationStarted, instance)
     }
 
     override fun stop() {
@@ -308,7 +319,6 @@ public class ApplicationEngineEnvironmentReloading(
             }
         }
 
-        safeRiseEvent(ApplicationStarted, newInstance)
         return newInstance
     }
 
