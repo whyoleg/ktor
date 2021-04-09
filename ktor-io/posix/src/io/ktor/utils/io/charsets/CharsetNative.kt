@@ -376,7 +376,10 @@ public actual fun CharsetDecoder.decodeExactBytes(input: Input, inputLength: Int
             }
         }
 
-        return String(chars, 0, charsCopied)
+        if (bytesConsumed < inputLength) {
+            throw EOFException("Not enough bytes available: had only $bytesConsumed instead of $inputLength")
+        }
+        return chars.concatToString(0, 0 + charsCopied)
     } finally {
         iconv_close(cd)
     }
