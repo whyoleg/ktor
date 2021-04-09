@@ -7,6 +7,7 @@ package io.ktor.server.netty
 import io.ktor.application.*
 import io.ktor.server.engine.*
 import io.ktor.util.*
+import io.ktor.util.network.*
 import io.ktor.util.pipeline.*
 import io.netty.bootstrap.*
 import io.netty.channel.*
@@ -174,7 +175,18 @@ public class NettyApplicationEngine(
         environment.start()
 
         channels = bootstraps.zip(environment.connectorsConfig)
-            .map { it.first.bind(it.second.host, it.second.port) }
+            .map { (bootstrap, config) ->
+                val future = bootstrap.bind(config.host, config.port)
+                future.addListener {
+                    if (future.isSuccess) {
+                        val port = future.channel().localAddress().port
+                        environment.monitor.raise(
+                            EngineConnectorStarted,
+                            EngineConnectorInfo(config.type, config.host, port)
+                        )
+                    }
+                }
+            }
             .map { it.sync().channel() }
 
         cancellationDeferred = stopServerOnCancellation()
