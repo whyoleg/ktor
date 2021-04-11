@@ -4,6 +4,9 @@
 
 kotlin.sourceSets {
     val commonMain by getting {
+        repositories {
+            maven ( "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev" )
+        }
         dependencies {
             api(project(":ktor-client:ktor-client-core"))
         }
