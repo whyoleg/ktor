@@ -44,6 +44,7 @@ abstract class RandomPortTestSuite<TEngine : ApplicationEngine,
                 .connectorsConfig.single().port
         )
         assertNotEquals(-1, actualPort)
+        assertEquals(ConnectorType.HTTP, server!!.application.environment.startedConnectors.single().type)
 
         runBlocking {
             HttpClient().use { client ->

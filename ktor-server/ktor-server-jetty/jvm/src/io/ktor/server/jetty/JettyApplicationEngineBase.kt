@@ -48,6 +48,23 @@ public open class JettyApplicationEngineBase @EngineAPI constructor(
         environment.start()
 
         server.start()
+
+        server.connectors.forEach {
+            if (it is AbstractNetworkConnector) {
+                val type = when {
+                    it.connectionFactories.any { factory -> factory is SslConnectionFactory } -> ConnectorType.HTTPS
+                    else -> ConnectorType.HTTP
+                }
+                environment.monitor.raise(
+                    EngineConnectorStarted, EngineConnectorInfo(
+                        type,
+                        it.host,
+                        it.localPort
+                    )
+                )
+            }
+        }
+
         cancellationDeferred = stopServerOnCancellation()
         if (wait) {
             server.join()
