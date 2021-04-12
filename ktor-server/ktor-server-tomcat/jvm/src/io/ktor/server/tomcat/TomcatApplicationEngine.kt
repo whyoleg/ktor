@@ -122,6 +122,7 @@ public class TomcatApplicationEngine(environment: ApplicationEngineEnvironment, 
     override fun start(wait: Boolean): TomcatApplicationEngine {
         environment.start()
         server.start()
+        announceActualConnectors()
         cancellationDeferred = stopServerOnCancellation()
         if (wait) {
             server.server.await()
@@ -138,6 +139,21 @@ public class TomcatApplicationEngine(environment: ApplicationEngineEnvironment, 
             environment.stop()
             server.destroy()
             tempDirectory.toFile().deleteRecursively()
+        }
+    }
+
+    private fun announceActualConnectors() {
+        server.service.findConnectors().forEach { connector ->
+            environment.monitor.raise(
+                EngineConnectorStarted, EngineConnectorInfo(
+                    when (connector.secure) {
+                        true -> ConnectorType.HTTPS
+                        false -> ConnectorType.HTTP
+                    },
+                    connector.getProperty("host")?.toString() ?: "0.0.0.0",
+                    connector.localPort
+                )
+            )
         }
     }
 
