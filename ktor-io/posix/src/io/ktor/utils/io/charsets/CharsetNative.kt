@@ -376,7 +376,7 @@ public actual fun CharsetDecoder.decodeExactBytes(input: Input, inputLength: Int
             }
         }
 
-        return String(chars, 0, charsCopied)
+        return chars.concatToString(0, 0 + charsCopied)
     } finally {
         iconv_close(cd)
     }

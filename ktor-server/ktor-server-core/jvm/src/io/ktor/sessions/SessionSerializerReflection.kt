@@ -85,7 +85,7 @@ public class SessionSerializerReflection<T : Any>(public val type: KClass<T>) : 
     private fun findConstructor(bundle: StringValues): KFunction<T> =
         type.constructors
             .filter { it.parameters.all { parameter -> parameter.name != null && parameter.name!! in bundle } }
-            .maxBy { it.parameters.size }
+            .maxByOrNull({ it.parameters.size })
             ?: throw IllegalArgumentException("Couldn't instantiate type $type for parameters ${bundle.names()}")
 
     private fun assignValue(instance: T, p: KProperty1<T, *>, value: Any?) {
