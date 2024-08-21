@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 import org.gradle.api.*
@@ -17,13 +17,14 @@ val Project.hasDesktop: Boolean get() = hasPosix || files.any { it.name == "desk
 val Project.hasNix: Boolean get() = hasPosix || hasJvmAndNix || files.any { it.name == "nix" }
 val Project.hasLinux: Boolean get() = hasNix || files.any { it.name == "linux" }
 val Project.hasDarwin: Boolean get() = hasNix || files.any { it.name == "darwin" }
+val Project.hasAndroidNative: Boolean get() = hasPosix || files.any { it.name == "androidNative" }
 val Project.hasWindows: Boolean get() = hasPosix || files.any { it.name == "windows" }
 val Project.hasJsAndWasmShared: Boolean get() = files.any { it.name == "jsAndWasmShared" }
 val Project.hasJs: Boolean get() = hasCommon || files.any { it.name == "js" } || hasJsAndWasmShared
 val Project.hasWasm: Boolean get() = hasCommon || files.any { it.name == "wasmJs" } || hasJsAndWasmShared
 val Project.hasJvm: Boolean get() = hasCommon || hasJvmAndNix || hasJvmAndPosix || files.any { it.name == "jvm" }
 val Project.hasNative: Boolean
-    get() = hasCommon || hasNix || hasPosix || hasLinux || hasDarwin || hasDesktop || hasWindows
+    get() = hasCommon || hasNix || hasPosix || hasLinux || hasAndroidNative || hasDarwin || hasDesktop || hasWindows
 
 fun Project.configureTargets() {
     configureCommon()
@@ -55,7 +56,7 @@ fun Project.configureTargets() {
             configureWasm()
         }
 
-        if (hasPosix || hasLinux || hasDarwin || hasWindows) extra.set("hasNative", true)
+        if (hasPosix || hasLinux || hasAndroidNative || hasDarwin || hasWindows) extra.set("hasNative", true)
 
         sourceSets {
             if (hasJsAndWasmShared) {
@@ -151,6 +152,11 @@ fun Project.configureTargets() {
             if (hasLinux) {
                 val linuxMain by creating
                 val linuxTest by creating
+            }
+
+            if (hasAndroidNative && project.name != "ktor-server-config-yaml" && project.name != "ktor-server-html-builder") {
+                val androidNativeMain by creating
+                val androidNativeTest by creating
             }
 
             if (hasWindows) {
@@ -312,6 +318,21 @@ fun Project.configureTargets() {
                 desktopTargets().forEach {
                     getByName("${it}Main").dependsOn(desktopMain)
                     getByName("${it}Test").dependsOn(desktopTest)
+                }
+            }
+
+            if (hasAndroidNative && project.name != "ktor-server-config-yaml" && project.name != "ktor-server-html-builder") {
+                val androidNativeMain by getting {
+                    findByName("posixMain")?.let { dependsOn(it) }
+                }
+
+                val androidNativeTest by getting {
+                    findByName("posixTest")?.let { dependsOn(it) }
+                }
+
+                androidNativeTargets().forEach {
+                    getByName("${it}Main").dependsOn(androidNativeMain)
+                    getByName("${it}Test").dependsOn(androidNativeTest)
                 }
             }
 

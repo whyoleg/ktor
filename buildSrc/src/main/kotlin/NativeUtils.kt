@@ -1,12 +1,23 @@
 /*
- * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 import org.gradle.api.*
 
-fun Project.posixTargets(): List<String> = nixTargets() + windowsTargets()
+fun Project.posixTargets(): List<String> = nixTargets() + windowsTargets() + androidNativeTargets()
 
 fun Project.nixTargets(): List<String> = darwinTargets() + linuxTargets()
+
+fun Project.androidNativeTargets(): List<String> = with(kotlin) {
+    if (project.name != "ktor-server-config-yaml" &&
+        project.name != "ktor-server-html-builder"
+    ) listOf(
+        androidNativeArm32(),
+        androidNativeArm64(),
+        androidNativeX86(),
+        androidNativeX64(),
+    ) else emptyList()
+}.map { it.name }
 
 fun Project.linuxTargets(): List<String> = with(kotlin) {
     listOf(
