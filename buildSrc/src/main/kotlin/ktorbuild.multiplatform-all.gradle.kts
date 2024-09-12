@@ -3,7 +3,13 @@
  */
 
 plugins {
-    id("ktorbuild.multiplatform-all")
+    kotlin("multiplatform")
 }
 
-description = "Ktor client and server shared support for CallId"
+// all targets
+
+configureCommon()
+configureJvm()
+configureJs()
+configureWasm()
+configureNative()

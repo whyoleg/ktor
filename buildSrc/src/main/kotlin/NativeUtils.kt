@@ -4,6 +4,8 @@
 
 import org.gradle.api.*
 
+fun Project.nativeTargets(): List<String> = posixTargets()
+
 fun Project.posixTargets(): List<String> = nixTargets() + windowsTargets() + androidNativeTargets()
 
 fun Project.nixTargets(): List<String> = darwinTargets() + linuxTargets()

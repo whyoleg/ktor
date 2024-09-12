@@ -5,7 +5,6 @@
 import org.gradle.api.*
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import java.io.*
 
 val Project.files: Array<File> get() = project.projectDir.listFiles() ?: emptyArray()
@@ -27,37 +26,18 @@ val Project.hasNative: Boolean
     get() = hasCommon || hasNix || hasPosix || hasLinux || hasAndroidNative || hasDarwin || hasDesktop || hasWindows
 
 fun Project.configureTargets() {
+    if (project.name in setOf(
+            "ktor-call-id",
+            "ktor-events"
+        )
+    ) return
+
     configureCommon()
     if (hasJvm) configureJvm()
+    if (hasJs) configureJs()
+    if (hasWasm) configureWasm()
 
     kotlin {
-        if (hasJs) {
-            js {
-                nodejs()
-                // we don't test `server` modules in a browser.
-                // there are 2 explanations why:
-                // * logical - we don't need server in browser
-                // * technical - we don't have access to files, os, etc.
-                // Also, because of the ` origin ` URL in a browser, special support in `test-host` need to be implemented
-                if (!project.name.startsWith("ktor-server")) browser()
-            }
-
-            configureJs()
-        }
-
-        if (hasWasm) {
-            @OptIn(ExperimentalWasmDsl::class)
-            wasmJs {
-                nodejs()
-                // we don't test `server` modules in a browser.
-                if (!project.name.startsWith("ktor-server")) browser()
-            }
-
-            configureWasm()
-        }
-
-        if (hasPosix || hasLinux || hasAndroidNative || hasDarwin || hasWindows) extra.set("hasNative", true)
-
         sourceSets {
             if (hasJsAndWasmShared) {
                 val commonMain by getting {}
