@@ -1,15 +1,14 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
 package io.ktor.network.sockets
 
-internal const val INFINITE_TIMEOUT_MS = Long.MAX_VALUE
+private const val INFINITE_TIMEOUT_MS = Long.MAX_VALUE
 
 /**
  * Socket options builder
  */
-@OptIn(ExperimentalUnsignedTypes::class)
 public sealed class SocketOptions(
     protected val customOptions: MutableMap<Any, Any?>
 ) {
@@ -30,7 +29,7 @@ public sealed class SocketOptions(
         }
     }
 
-    internal fun acceptor(): AcceptorOptions {
+    internal fun tcpAccept(): AcceptorOptions {
         return AcceptorOptions(HashMap(customOptions)).apply {
             copyCommon(this@SocketOptions)
         }
@@ -62,6 +61,7 @@ public sealed class SocketOptions(
     /**
      * TCP server socket options
      */
+    // TODO[whyoleg] rename
     public class AcceptorOptions internal constructor(
         customOptions: MutableMap<Any, Any?>
     ) : SocketOptions(customOptions) {
@@ -113,7 +113,7 @@ public sealed class SocketOptions(
             }
         }
 
-        internal fun tcp(): TCPClientSocketOptions {
+        internal fun tcpConnect(): TCPClientSocketOptions {
             return TCPClientSocketOptions(HashMap(customOptions)).apply {
                 copyCommon(this@PeerSocketOptions)
             }
@@ -129,6 +129,7 @@ public sealed class SocketOptions(
     /**
      * Represents UDP socket options
      */
+    // TODO[whyoleg] rename
     public class UDPSocketOptions internal constructor(
         customOptions: MutableMap<Any, Any?>
     ) : PeerSocketOptions(customOptions) {
@@ -155,6 +156,7 @@ public sealed class SocketOptions(
     /**
      * Represents TCP client socket options
      */
+    // TODO[whyoleg] rename
     public class TCPClientSocketOptions internal constructor(
         customOptions: MutableMap<Any, Any?>
     ) : PeerSocketOptions(customOptions) {
@@ -195,7 +197,7 @@ public sealed class SocketOptions(
         }
     }
 
-    public companion object {
+    internal companion object {
         internal fun create(): SocketOptions = GeneralSocketOptions(HashMap())
     }
 }

@@ -1,15 +1,16 @@
-package io.ktor.network.sockets
+/*
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
-import io.ktor.network.selector.*
+package io.ktor.network.sockets
 
 /**
  * TCP socket builder
  */
-@Suppress("PublicApiImplicitType")
-public class TcpSocketBuilder(
-    private val selector: SelectorManager,
-    override var options: SocketOptions
-) : Configurable<TcpSocketBuilder, SocketOptions> {
+public class TcpSocketBuilder internal constructor(
+    private val engine: SocketEngine,
+    override var options: SocketOptions.PeerSocketOptions
+) : Configurable<TcpSocketBuilder, SocketOptions.PeerSocketOptions> {
     /**
      * Connect to [hostname] and [port].
      */
@@ -34,7 +35,7 @@ public class TcpSocketBuilder(
     public suspend fun connect(
         remoteAddress: SocketAddress,
         configure: SocketOptions.TCPClientSocketOptions.() -> Unit = {}
-    ): Socket = connect(selector, remoteAddress, options.peer().tcp().apply(configure))
+    ): Socket = engine.tcpConnect(remoteAddress, options.tcpConnect().apply(configure))
 
     /**
      * Bind server socket to listen to [localAddress].
@@ -42,5 +43,5 @@ public class TcpSocketBuilder(
     public fun bind(
         localAddress: SocketAddress? = null,
         configure: SocketOptions.AcceptorOptions.() -> Unit = {}
-    ): ServerSocket = bind(selector, localAddress, options.peer().acceptor().apply(configure))
+    ): ServerSocket = engine.tcpBind(localAddress, options.tcpAccept().apply(configure))
 }
