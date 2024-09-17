@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.network.sockets.tests
@@ -16,8 +16,8 @@ import kotlin.time.Duration.Companion.seconds
 class TCPSocketTest {
 
     @Test
-    fun testEcho() = testSockets { selector ->
-        val tcp = aSocket(selector).tcp()
+    fun testEcho() = testSockets { builder ->
+        val tcp = builder.tcp()
         val server = tcp.bind("127.0.0.1", 8000)
 
         val serverConnectionPromise = async {
@@ -59,12 +59,12 @@ class TCPSocketTest {
     }
 
     @Test
-    fun testEchoOverUnixSockets() = testSockets { selector ->
+    fun testEchoOverUnixSockets() = testSockets { builder ->
         if (!supportsUnixDomainSockets()) return@testSockets
 
         val socketPath = createTempFilePath("ktor-echo-test")
 
-        val tcp = aSocket(selector).tcp()
+        val tcp = builder.tcp()
         val server = tcp.bind(UnixSocketAddress(socketPath))
 
         val serverConnectionPromise = async {
@@ -108,15 +108,17 @@ class TCPSocketTest {
     }
 
     @Test
-    fun testReadFromCancelledSocket() = testSockets { selector ->
-        val tcp = aSocket(selector).tcp()
+    fun testReadFromCancelledSocket() = testSockets { builder ->
+        val tcp = builder.tcp()
         tcp.bind().use { server ->
             val serverConnection = async {
                 server.accept()
             }
 
-            val port = (server.localAddress as InetSocketAddress).port
-            val client: Socket = tcp.connect("127.0.0.1", port)
+            // TODO[whyoleg]: on js `bind` should be suspend and so we need some time for localAddress to be resolved
+            delay(500)
+
+            val client: Socket = tcp.connect(server.localAddress)
             val readChannel = client.openReadChannel()
             serverConnection.await()
 
@@ -129,17 +131,16 @@ class TCPSocketTest {
     }
 
     @Test
-    fun testConnectToNonExistingSocket() = testSockets(timeout = 10.seconds) { selector ->
+    fun testConnectToNonExistingSocket() = testSockets(timeout = 10.seconds) { builder ->
         assertFailsWith<IOException> {
-            aSocket(selector)
-                .tcp()
+            builder.tcp()
                 .connect("127.0.0.1", 8001) // there should be no server active on this port
         }
     }
 
     @Test
-    fun testDisconnect() = testSockets { selector ->
-        val tcp = aSocket(selector).tcp()
+    fun testDisconnect() = testSockets { builder ->
+        val tcp = builder.tcp()
         val server = tcp.bind("127.0.0.1", 8003)
 
         val serverConnectionPromise = async {

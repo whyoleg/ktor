@@ -6,7 +6,6 @@ package io.ktor.network.sockets.tests
 
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
-import io.ktor.network.util.*
 import io.ktor.test.dispatcher.*
 import kotlinx.coroutines.*
 import kotlinx.io.*
@@ -73,10 +72,8 @@ class TcpSocketTestNix {
     }
 
     @Test
-    fun testDescriptorError() = testSockets { selector ->
-        val socket = aSocket(selector)
-            .tcp()
-            .bind(InetSocketAddress("127.0.0.1", 0))
+    fun testDescriptorError() = testSockets { builder ->
+        val socket = builder.tcp().bind(InetSocketAddress("127.0.0.1", 0))
         val descriptor = (socket as TCPServerSocketNative).selectable.descriptor
 
         launch {
@@ -92,15 +89,11 @@ class TcpSocketTestNix {
     }
 
     @Test
-    fun testDescriptorErrorDoesNotFailOtherSockets() = testSockets { selector ->
-        val socket = aSocket(selector)
-            .tcp()
-            .bind(InetSocketAddress("127.0.0.1", 0))
+    fun testDescriptorErrorDoesNotFailOtherSockets() = testSockets { builder ->
+        val socket = builder.tcp().bind(InetSocketAddress("127.0.0.1", 0))
         val descriptor = (socket as TCPServerSocketNative).selectable.descriptor
 
-        val socket2 = aSocket(selector)
-            .tcp()
-            .bind(InetSocketAddress("127.0.0.1", 0))
+        val socket2 = builder.tcp().bind(InetSocketAddress("127.0.0.1", 0))
 
         launch {
             launch {
