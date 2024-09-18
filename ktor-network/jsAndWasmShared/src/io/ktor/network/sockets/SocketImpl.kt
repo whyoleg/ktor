@@ -52,6 +52,7 @@ internal class SocketImpl(
     override fun attachForReading(channel: ByteChannel): WriterJob = writer(EmptyCoroutineContext, channel = channel) {
         incoming.consumeEach { buffer ->
             channel.writeByteArray(buffer.toByteArray())
+            channel.flush()
         }
     }
 
