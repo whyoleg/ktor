@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 @file:Suppress("NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING", "KDocMissingDocumentation")
@@ -67,6 +67,18 @@ fun <T : HttpClientEngineConfig> testWithEngine(
     timeoutMillis: Long = 60L * 1000L,
     block: suspend TestClientBuilder<T>.() -> Unit
 ) = testSuspend(timeoutMillis = timeoutMillis) {
+    doTestWithEngine(factory, loader, block)
+}
+
+/**
+ * Perform test with selected client engine [factory].
+ */
+@OptIn(DelicateCoroutinesApi::class)
+suspend fun <T : HttpClientEngineConfig> doTestWithEngine(
+    factory: HttpClientEngineFactory<T>,
+    loader: ClientLoader? = null,
+    block: suspend TestClientBuilder<T>.() -> Unit
+) {
     val builder = TestClientBuilder<T>().apply { block() }
 
     if (builder.dumpAfterDelay > 0 && loader != null) {
