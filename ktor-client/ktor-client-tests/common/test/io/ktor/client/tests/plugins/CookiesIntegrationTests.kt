@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
 package io.ktor.client.tests.plugins
 
@@ -20,7 +20,7 @@ class CookiesIntegrationTests : ClientLoader() {
     private val domain = "127.0.0.1"
 
     @Test
-    fun testAccept() = clientTests(listOf("Js")) {
+    fun testAccept() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies)
         }
@@ -35,7 +35,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testUpdate() = clientTests(listOf("Js")) {
+    fun testUpdate() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies) {
                 default {
@@ -55,7 +55,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testExpiration() = clientTests(listOf("Js")) {
+    fun testExpiration() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies) {
                 default {
@@ -72,7 +72,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testConstant() = clientTests(listOf("Js")) {
+    fun testConstant() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies) {
                 storage = ConstantCookiesStorage(Cookie("id", "1", domain = domain))
@@ -89,7 +89,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testMultipleCookies() = clientTests(listOf("Js")) {
+    fun testMultipleCookies() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies) {
                 default {
@@ -106,7 +106,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testPath() = clientTests(listOf("js")) {
+    fun testPath() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies)
         }
@@ -118,7 +118,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun caseSensitive() = clientTests(listOf("Js", "Darwin", "DarwinLegacy")) {
+    fun caseSensitive() = clientTests(listOf("Fetch", "Darwin", "DarwinLegacy")) {
         config {
             install(HttpCookies)
         }
@@ -134,7 +134,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testMultipleCookiesWithComma() = clientTests(listOf("Js")) {
+    fun testMultipleCookiesWithComma() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies) {
                 default {
@@ -157,7 +157,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testCookiesEncodedWithRespectiveEncoding() = clientTests(listOf("Js")) {
+    fun testCookiesEncodedWithRespectiveEncoding() = clientTests(listOf("Fetch")) {
         val cookies = listOf(
             Cookie("uri", "first, cookie", domain = domain, encoding = CookieEncoding.URI_ENCODING),
             Cookie("raw", "first%2C+cookie", domain = domain, encoding = CookieEncoding.RAW),
@@ -186,7 +186,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testCookiesWithWrongValue() = clientTests(listOf("js", "Darwin", "DarwinLegacy", "WinHttp")) {
+    fun testCookiesWithWrongValue() = clientTests(listOf("Fetch", "Darwin", "DarwinLegacy", "WinHttp")) {
         config {
             install(HttpCookies)
         }
@@ -209,7 +209,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testRequestBuilderSingleCookie() = clientTests(listOf("Js")) {
+    fun testRequestBuilderSingleCookie() = clientTests(listOf("Fetch")) {
         test { client ->
             val result = client.get("$TEST_HOST/respond-single-cookie") {
                 cookie("single", value = "abacaba")
@@ -219,7 +219,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testRequestBuilderMultipleCookies() = clientTests(listOf("Js")) {
+    fun testRequestBuilderMultipleCookies() = clientTests(listOf("Fetch")) {
         test { client ->
             val result = client.get("$TEST_HOST/respond-a-minus-b") {
                 cookie("a", value = "10")
@@ -230,7 +230,7 @@ class CookiesIntegrationTests : ClientLoader() {
     }
 
     @Test
-    fun testSeparatedBySemicolon() = clientTests(listOf("Js")) {
+    fun testSeparatedBySemicolon() = clientTests(listOf("Fetch")) {
         test { client ->
             client.get("$TEST_HOST/encoded") {
                 cookie("firstCookie", "first")

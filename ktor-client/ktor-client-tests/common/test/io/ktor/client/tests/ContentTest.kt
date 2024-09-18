@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.client.tests
@@ -98,7 +98,7 @@ class ContentTest : ClientLoader(5 * 60) {
     }
 
     @Test
-    fun testSendByteReadChannel() = clientTests(listOf("Js")) {
+    fun testSendByteReadChannel() = clientTests(listOf("Fetch")) {
         config {
             install(HttpTimeout) {
                 socketTimeoutMillis = 1.minutes.inWholeMilliseconds
@@ -119,7 +119,7 @@ class ContentTest : ClientLoader(5 * 60) {
     }
 
     @Test
-    fun testSendByteWriteChannel() = clientTests(listOf("Js")) {
+    fun testSendByteWriteChannel() = clientTests(listOf("Fetch")) {
         config {
             install(HttpTimeout) {
                 socketTimeoutMillis = 1.minutes.inWholeMilliseconds

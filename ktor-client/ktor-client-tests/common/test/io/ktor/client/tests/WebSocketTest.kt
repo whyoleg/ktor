@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2022 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.client.tests
@@ -113,7 +113,7 @@ class WebSocketTest : ClientLoader() {
     }
 
     @Test
-    fun testWebsocketWithDefaultRequest() = clientTests(ENGINES_WITHOUT_WS + "Js") {
+    fun testWebsocketWithDefaultRequest() = clientTests(ENGINES_WITHOUT_WS + "Fetch") {
         config {
             install(WebSockets)
             defaultRequest {
@@ -144,7 +144,7 @@ class WebSocketTest : ClientLoader() {
     }
 
     @Test
-    fun testExceptionWss() = clientTests(ENGINES_WITHOUT_WS + "Js") {
+    fun testExceptionWss() = clientTests(ENGINES_WITHOUT_WS + "Fetch") {
         config {
             install(WebSockets)
         }
@@ -242,7 +242,7 @@ class WebSocketTest : ClientLoader() {
     }
 
     @Test
-    fun testCountPong() = clientTests(ENGINES_WITHOUT_WS + "Js") {
+    fun testCountPong() = clientTests(ENGINES_WITHOUT_WS + "Fetch") {
         config {
             install(WebSockets)
         }
@@ -327,7 +327,7 @@ class WebSocketTest : ClientLoader() {
     @Ignore // TODO KTOR-7088
     @Test
     fun testImmediateReceiveAfterConnect() = clientTests(
-        ENGINES_WITHOUT_WS + "Darwin" + "js" // TODO KTOR-7088
+        ENGINES_WITHOUT_WS + "Darwin" + "Fetch" // TODO KTOR-7088
     ) {
         config {
             install(WebSockets)

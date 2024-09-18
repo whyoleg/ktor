@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.client.tests
@@ -59,7 +59,7 @@ class HttpRedirectTest : ClientLoader() {
     }
 
     @Test
-    fun testRedirectWithCookies() = clientTests(listOf("Js")) {
+    fun testRedirectWithCookies() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCookies)
             install(HttpRedirect)
@@ -125,7 +125,7 @@ class HttpRedirectTest : ClientLoader() {
     }
 
     @Test
-    fun testRedirectHostAbsolute() = clientTests(listOf("Js")) {
+    fun testRedirectHostAbsolute() = clientTests(listOf("Fetch")) {
         test { client ->
             client.prepareGet("$TEST_URL_BASE/directory/hostAbsoluteRedirect").execute {
                 assertEquals("OK", it.bodyAsText())

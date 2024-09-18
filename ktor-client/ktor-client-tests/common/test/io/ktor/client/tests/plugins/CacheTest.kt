@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 package io.ktor.client.tests.plugins
 
 import io.ktor.client.call.*
@@ -74,7 +74,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testETagCache() = clientTests(listOf("Js")) {
+    fun testETagCache() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -98,7 +98,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testReuseCacheStorage() = clientTests(listOf("Js")) {
+    fun testReuseCacheStorage() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -123,7 +123,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testLastModified() = clientTests(listOf("Js")) {
+    fun testLastModified() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -147,7 +147,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testVary() = clientTests(listOf("Js")) {
+    fun testVary() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -204,7 +204,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testVaryStale() = clientTests(listOf("Js")) {
+    fun testVaryStale() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -262,7 +262,7 @@ class CacheTest : ClientLoader() {
 
     @OptIn(InternalAPI::class)
     @Test
-    fun testNoVaryIn304() = clientTests(listOf("Js")) {
+    fun testNoVaryIn304() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -544,7 +544,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testNoStoreRequest() = clientTests(listOf("Js")) {
+    fun testNoStoreRequest() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -570,7 +570,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testNoCacheRequest() = clientTests(listOf("Js")) {
+    fun testNoCacheRequest() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {
@@ -602,7 +602,7 @@ class CacheTest : ClientLoader() {
     }
 
     @Test
-    fun testRequestWithMaxAge0() = clientTests(listOf("Js")) {
+    fun testRequestWithMaxAge0() = clientTests(listOf("Fetch")) {
         val publicStorage = CacheStorage.Unlimited()
         val privateStorage = CacheStorage.Unlimited()
         config {

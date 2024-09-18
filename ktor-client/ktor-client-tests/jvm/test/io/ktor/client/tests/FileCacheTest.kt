@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 package io.ktor.client.tests
 
 import io.ktor.client.call.*
@@ -18,7 +18,7 @@ class FileCacheTest : ClientLoader() {
     private val privateStorage = FileStorage(Files.createTempDirectory("cache-test-private").toFile())
 
     @Test
-    fun testVaryHeader() = clientTests(listOf("Js")) {
+    fun testVaryHeader() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCache) {
                 publicStorage(this@FileCacheTest.publicStorage)
@@ -76,7 +76,7 @@ class FileCacheTest : ClientLoader() {
     }
 
     @Test
-    fun testReuseCacheStorage() = clientTests(listOf("Js")) {
+    fun testReuseCacheStorage() = clientTests(listOf("Fetch")) {
         config {
             install(HttpCache) {
                 publicStorage(this@FileCacheTest.publicStorage)

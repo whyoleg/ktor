@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2023 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
 package io.ktor.client.tests.plugins
@@ -22,7 +22,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlin.coroutines.*
 import kotlin.test.*
-import kotlin.test.assertFailsWith
 
 class ServerSentEventsTest : ClientLoader(timeoutSeconds = 120) {
 
@@ -345,7 +344,7 @@ class ServerSentEventsTest : ClientLoader(timeoutSeconds = 120) {
     // Android, Darwin and Js engines don't support request body in GET request
     // SSE in OkHttp and Curl doesn't send a request body for GET request
     @Test
-    fun testRequestBody() = clientTests(listOf("Android", "Darwin", "DarwinLegacy", "Js", "OkHttp", "Curl")) {
+    fun testRequestBody() = clientTests(listOf("Android", "Darwin", "DarwinLegacy", "Fetch", "OkHttp", "Curl")) {
         config {
             install(SSE)
         }

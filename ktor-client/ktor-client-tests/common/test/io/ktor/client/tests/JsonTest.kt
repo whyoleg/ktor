@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
 package io.ktor.client.tests
 
@@ -22,7 +22,7 @@ class JsonTest : ClientLoader() {
 
     @OptIn(ExperimentalStdlibApi::class)
     @Test
-    fun testUserGenerics() = clientTests(listOf("js")) {
+    fun testUserGenerics() = clientTests(listOf("Fetch")) {
         config {
             install(ContentNegotiation) { json() }
         }
