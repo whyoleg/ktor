@@ -4,13 +4,12 @@
 
 package io.ktor.client.engine.cio
 
-import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
 import io.ktor.util.collections.*
 import kotlinx.coroutines.sync.*
 
 internal class ConnectionFactory(
-    private val selector: SelectorManager,
+    private val socketEngine: SocketEngine,
     connectionsLimit: Int,
     private val addressConnectionsLimit: Int
 ) {
@@ -27,7 +26,7 @@ internal class ConnectionFactory(
             addressSemaphore.acquire()
 
             try {
-                aSocket(selector).tcp().connect(address, configuration)
+                SocketBuilder(socketEngine).tcp().connect(address, configuration)
             } catch (cause: Throwable) {
                 // a failure or cancellation
                 addressSemaphore.release()

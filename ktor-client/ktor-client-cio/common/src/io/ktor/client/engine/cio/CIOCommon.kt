@@ -1,8 +1,8 @@
-// ktlint-disable filename
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
+// ktlint-disable filename
 package io.ktor.client.engine.cio
 
 import io.ktor.client.engine.*
@@ -26,10 +26,6 @@ import io.ktor.client.engine.*
  * You can learn more about client engines from [Engines](https://ktor.io/docs/http-client-engines.html).
  */
 public data object CIO : HttpClientEngineFactory<CIOEngineConfig> {
-    init {
-        addToLoader()
-    }
-
     override fun create(block: CIOEngineConfig.() -> Unit): HttpClientEngine =
         CIOEngine(CIOEngineConfig().apply(block))
 }

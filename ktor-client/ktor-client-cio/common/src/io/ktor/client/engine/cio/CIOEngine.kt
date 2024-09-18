@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
 package io.ktor.client.engine.cio
 
@@ -10,7 +10,7 @@ import io.ktor.client.plugins.sse.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
 import io.ktor.util.*
 import io.ktor.util.collections.*
 import io.ktor.util.network.*
@@ -29,10 +29,10 @@ internal class CIOEngine(
 
     private val endpoints = ConcurrentMap<String, Endpoint>()
 
-    private val selectorManager = SelectorManager(dispatcher)
+    private val socketEngine = SocketEngine(dispatcher)
 
     private val connectionFactory = ConnectionFactory(
-        selectorManager,
+        socketEngine,
         config.maxConnectionsCount,
         config.endpoint.maxConnectionsPerRoute
     )
@@ -59,15 +59,15 @@ internal class CIOEngine(
         coroutineContext = parentContext + requestField
 
         val requestJob = requestField[Job]!!
-        val selector = selectorManager
+        val socketEngine = socketEngine
 
         @OptIn(ExperimentalCoroutinesApi::class)
         GlobalScope.launch(parentContext, start = CoroutineStart.ATOMIC) {
             try {
                 requestJob.join()
             } finally {
-                selector.close()
-                selector.coroutineContext[Job]!!.join()
+                socketEngine.close()
+                socketEngine.coroutineContext[Job]!!.join()
             }
         }
     }

@@ -1,31 +1,33 @@
 /*
- * Copyright 2014-2023 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
-import io.ktor.client.engine.cio.*
-import io.ktor.network.selector.*
+
+package io.ktor.client.engine.cio
+
 import io.ktor.network.sockets.*
+import io.ktor.test.dispatcher.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlin.test.*
 
 class ConnectionFactoryTest {
 
-    private lateinit var selectorManager: SelectorManager
+    private lateinit var socketEngine: SocketEngine
 
     @BeforeTest
     fun setup() {
-        selectorManager = SelectorManager()
+        socketEngine = SocketEngine()
     }
 
     @AfterTest
     fun teardown() {
-        selectorManager.close()
+        socketEngine.close()
     }
 
     @Test
-    fun testLimitSemaphore() = runBlocking {
+    fun testLimitSemaphore() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
-            selectorManager,
+            socketEngine,
             connectionsLimit = 2,
             addressConnectionsLimit = 1,
         )
@@ -44,9 +46,9 @@ class ConnectionFactoryTest {
     }
 
     @Test
-    fun testAddressSemaphore() = runBlocking {
+    fun testAddressSemaphore() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
-            selectorManager,
+            socketEngine,
             connectionsLimit = 2,
             addressConnectionsLimit = 1,
         )
@@ -67,9 +69,9 @@ class ConnectionFactoryTest {
     }
 
     @Test
-    fun testReleaseLimitSemaphoreWhenFailed() = runBlocking {
+    fun testReleaseLimitSemaphoreWhenFailed() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
-            selectorManager,
+            socketEngine,
             connectionsLimit = 2,
             addressConnectionsLimit = 1,
         )
@@ -96,7 +98,8 @@ class ConnectionFactoryTest {
     }
 
     private suspend fun withServerSocket(block: suspend (ServerSocket) -> Unit) {
-        aSocket(selectorManager).tcp().bind(TEST_SERVER_SOCKET_HOST, 0).use { socket ->
+        SocketBuilder(socketEngine).tcp().bind(TEST_SERVER_SOCKET_HOST, 0).use { socket ->
+            delay(500) // await server start on nodes
             block(socket)
         }
     }

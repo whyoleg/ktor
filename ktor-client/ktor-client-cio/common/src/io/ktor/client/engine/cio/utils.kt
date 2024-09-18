@@ -1,6 +1,6 @@
 /*
-* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
-*/
+ * Copyright 2014-2024 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
 
 package io.ktor.client.engine.cio
 
@@ -15,10 +15,9 @@ import io.ktor.util.date.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.CancellationException
 import io.ktor.utils.io.core.*
-import io.ktor.utils.io.errors.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.*
-import kotlinx.io.IOException
+import kotlinx.io.*
 import kotlin.coroutines.*
 
 internal suspend fun writeRequest(
