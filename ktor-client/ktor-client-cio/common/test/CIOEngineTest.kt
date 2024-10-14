@@ -10,6 +10,7 @@ import io.ktor.client.tests.utils.*
 import io.ktor.http.*
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
+import io.ktor.test.dispatcher.*
 import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import io.ktor.websocket.*
@@ -23,7 +24,7 @@ class CIOEngineTest {
     private val selectorManager = SelectorManager()
 
     @Test
-    fun testRequestTimeoutIgnoredWithWebSocket(): Unit = runBlocking {
+    fun testRequestTimeoutIgnoredWithWebSocket() = runTestWithRealTime {
         val client = HttpClient(CIO) {
             engine {
                 requestTimeout = 10
@@ -47,7 +48,7 @@ class CIOEngineTest {
     }
 
     @Test
-    fun testRequestTimeoutIgnoredWithSSE(): Unit = runBlocking {
+    fun testRequestTimeoutIgnoredWithSSE() = runTestWithRealTime {
         val client = HttpClient(CIO) {
             engine {
                 requestTimeout = 10
@@ -66,12 +67,12 @@ class CIOEngineTest {
     }
 
     @Test
-    fun testExpectHeader(): Unit = runBlocking {
+    fun testExpectHeader() = runTestWithRealTime {
         val body = "Hello World"
 
         withServerSocket { socket ->
             val client = HttpClient(CIO)
-            launch {
+            val request = launch {
                 sendExpectRequest(socket, client, body).apply {
                     assertEquals(HttpStatusCode.OK, status)
                 }
@@ -89,15 +90,16 @@ class CIOEngineTest {
                 val actualBody = readAvailableLine(readChannel)
                 assertEquals(body, actualBody)
                 writeOkResponse(writeChannel)
+                request.join()
             }
         }
     }
 
     @Test
-    fun testNoExpectHeaderIfNoBody(): Unit = runBlocking {
+    fun testNoExpectHeaderIfNoBody() = runTestWithRealTime {
         withServerSocket { socket ->
             val client = HttpClient(CIO)
-            launch {
+            val request = launch {
                 sendExpectRequest(socket, client).apply {
                     assertEquals(HttpStatusCode.OK, status)
                 }
@@ -110,12 +112,13 @@ class CIOEngineTest {
                 val headers = readAvailableLines(readChannel)
                 assertFalse(headers.contains(EXPECT_HEADER))
                 writeOkResponse(writeChannel)
+                request.join()
             }
         }
     }
 
     @Test
-    fun testDontWaitForContinueResponse(): Unit = runBlocking {
+    fun testDontWaitForContinueResponse() = runTestWithRealTime {
         withTimeout(30.seconds) {
             val body = "Hello World\n"
 
@@ -125,7 +128,7 @@ class CIOEngineTest {
                         requestTimeout = 0
                     }
                 }
-                launch {
+                val request = launch {
                     sendExpectRequest(socket, client, body).apply {
                         assertEquals(HttpStatusCode.OK, status)
                     }
@@ -141,18 +144,19 @@ class CIOEngineTest {
                     assertTrue(headers.contains(EXPECT_HEADER))
                     assertEquals(body, actualBody)
                     writeOkResponse(writeChannel)
+                    request.join()
                 }
             }
         }
     }
 
     @Test
-    fun testRepeatRequestAfterExpectationFailed(): Unit = runBlocking {
+    fun testRepeatRequestAfterExpectationFailed() = runTestWithRealTime {
         val body = "Hello World"
 
         withServerSocket { socket ->
             val client = HttpClient(CIO)
-            launch {
+            val request = launch {
                 sendExpectRequest(socket, client, body).apply {
                     assertEquals(HttpStatusCode.OK, status)
                 }
@@ -171,6 +175,7 @@ class CIOEngineTest {
                 assertFalse(newRequest.contains(EXPECT_HEADER))
                 assertTrue(newRequest.contains(body))
                 writeOkResponse(writeChannel)
+                request.join()
             }
         }
     }

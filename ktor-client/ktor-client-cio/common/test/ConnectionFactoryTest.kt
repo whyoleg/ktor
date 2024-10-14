@@ -4,6 +4,7 @@
 import io.ktor.client.engine.cio.*
 import io.ktor.network.selector.*
 import io.ktor.network.sockets.*
+import io.ktor.test.dispatcher.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.*
 import kotlin.test.*
@@ -23,7 +24,7 @@ class ConnectionFactoryTest {
     }
 
     @Test
-    fun testLimitSemaphore() = runBlocking {
+    fun testLimitSemaphore() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
             selectorManager,
             connectionsLimit = 2,
@@ -44,7 +45,7 @@ class ConnectionFactoryTest {
     }
 
     @Test
-    fun testAddressSemaphore() = runBlocking {
+    fun testAddressSemaphore() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
             selectorManager,
             connectionsLimit = 2,
@@ -67,7 +68,7 @@ class ConnectionFactoryTest {
     }
 
     @Test
-    fun testReleaseLimitSemaphoreWhenFailed() = runBlocking {
+    fun testReleaseLimitSemaphoreWhenFailed() = runTestWithRealTime {
         val connectionFactory = ConnectionFactory(
             selectorManager,
             connectionsLimit = 2,
