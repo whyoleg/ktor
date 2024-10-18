@@ -10,6 +10,8 @@ import kotlin.time.*
 import kotlin.time.Duration.Companion.minutes
 
 internal expect val enginesToTest: Iterable<HttpClientEngineFactory<HttpClientEngineConfig>>
+
+// TODO: try to replace it with `PlatformUtils`
 internal expect val platformName: String
 internal expect fun platformDumpCoroutines()
 internal expect fun platformWaitForAllCoroutines()
@@ -99,12 +101,12 @@ private data class SkipEnginePattern(
             val platform: String?
             val engine: String?
             when (parts.size) {
-                1    -> {
+                1 -> {
                     platform = null
                     engine = parts[0]
                 }
 
-                2    -> {
+                2 -> {
                     platform = parts[0]
                     engine = parts[1]
                 }

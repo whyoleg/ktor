@@ -5,9 +5,4 @@
 
 package io.ktor.client.tests.utils
 
-import io.ktor.client.engine.*
-import io.ktor.utils.io.*
-
-@OptIn(InternalAPI::class)
-internal actual val enginesToTest: Iterable<HttpClientEngineFactory<HttpClientEngineConfig>> get() = engines
 internal actual val platformName: String get() = "web"

@@ -7,6 +7,7 @@ package io.ktor.server.plugins.doublereceive
 import io.ktor.utils.io.*
 import kotlin.coroutines.*
 
+// TODO: could be implemented in common via kotlinx-io
 internal expect class FileCache(
     body: ByteReadChannel,
     bufferSize: Int = 4096,

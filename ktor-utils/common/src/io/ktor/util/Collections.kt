@@ -8,8 +8,3 @@ package io.ktor.util
  * Create an instance of case-insensitive mutable map. For internal use only.
  */
 public fun <Value : Any> caseInsensitiveMap(): MutableMap<String, Value> = CaseInsensitiveMap()
-
-/**
- * Freeze selected set. May do nothing on some platforms.
- */
-public expect fun <T> Set<T>.unmodifiable(): Set<T>

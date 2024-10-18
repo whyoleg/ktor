@@ -1,0 +1,11 @@
+/*
+* Copyright 2014-2021 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+*/
+
+package io.ktor.util
+
+/**
+ * Freeze selected set. May do nothing on some platforms.
+ */
+@Deprecated("Not used anymore", ReplaceWith("this"))
+public fun <T> Set<T>.unmodifiable(): Set<T> = this

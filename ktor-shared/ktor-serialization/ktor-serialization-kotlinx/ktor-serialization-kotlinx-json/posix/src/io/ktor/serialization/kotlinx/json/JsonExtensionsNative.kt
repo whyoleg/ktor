@@ -10,18 +10,8 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import kotlinx.serialization.json.*
 
-@OptIn(InternalAPI::class)
-private fun init() {
-    addExtensionProvider(KotlinxSerializationJsonExtensionProvider())
-}
-
+// TODO: do the same for other targets
 @Suppress("unused", "DEPRECATION")
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class, InternalAPI::class)
 @EagerInitialization
-private val initHook = init()
-
-internal actual suspend fun deserializeSequence(
-    format: Json,
-    content: ByteReadChannel,
-    typeInfo: TypeInfo
-): Sequence<Any?>? = null
+private val initHook = addExtensionProvider(KotlinxSerializationJsonExtensionProvider())

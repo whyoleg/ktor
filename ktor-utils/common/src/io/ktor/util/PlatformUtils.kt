@@ -23,11 +23,11 @@ public object PlatformUtils {
 
     public val IS_DEVELOPMENT_MODE: Boolean = isDevelopmentMode
 
-    public val IS_NEW_MM_ENABLED: Boolean = isNewMemoryModel
+    @Deprecated("Not used anymore", ReplaceWith("true"))
+    public val IS_NEW_MM_ENABLED: Boolean = true
 }
 
 internal expect val PlatformUtils.isDevelopmentMode: Boolean
-internal expect val PlatformUtils.isNewMemoryModel: Boolean
 
 public expect val PlatformUtils.platform: Platform
 
@@ -36,6 +36,7 @@ public sealed class Platform {
     public data object Native : Platform()
     public data class Js(val jsPlatform: JsPlatform) : Platform()
     public data class WasmJs(val jsPlatform: JsPlatform) : Platform()
+    public data object WasmWasi : Platform()
 
     public enum class JsPlatform { Browser, Node }
 }

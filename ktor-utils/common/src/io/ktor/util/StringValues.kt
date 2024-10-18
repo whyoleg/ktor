@@ -169,11 +169,11 @@ public open class StringValuesImpl(
 
     override fun contains(name: String, value: String): Boolean = listForKey(name)?.contains(value) ?: false
 
-    override fun names(): Set<String> = values.keys.unmodifiable()
+    override fun names(): Set<String> = values.keys
 
     override fun isEmpty(): Boolean = values.isEmpty()
 
-    override fun entries(): Set<Map.Entry<String, List<String>>> = values.entries.unmodifiable()
+    override fun entries(): Set<Map.Entry<String, List<String>>> = values.entries
 
     override fun forEach(body: (String, List<String>) -> Unit) {
         for ((key, value) in values) body(key, value)
@@ -212,7 +212,7 @@ public open class StringValuesBuilderImpl(
 
     override fun isEmpty(): Boolean = values.isEmpty()
 
-    override fun entries(): Set<Map.Entry<String, List<String>>> = values.entries.unmodifiable()
+    override fun entries(): Set<Map.Entry<String, List<String>>> = values.entries
 
     override operator fun set(name: String, value: String) {
         validateValue(value)

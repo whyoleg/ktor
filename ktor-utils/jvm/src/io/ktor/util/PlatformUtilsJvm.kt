@@ -11,6 +11,3 @@ public actual val PlatformUtils.platform: Platform
 
 internal actual val PlatformUtils.isDevelopmentMode: Boolean
     get() = System.getProperty(DEVELOPMENT_MODE_KEY)?.toBoolean() == true
-
-internal actual val PlatformUtils.isNewMemoryModel: Boolean
-    get() = true

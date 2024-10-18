@@ -5,12 +5,6 @@
 
 package io.ktor.util
 
-internal actual val PlatformUtils.isDevelopmentMode: Boolean
-    get() = false
-
-internal actual val PlatformUtils.isNewMemoryModel: Boolean
-    get() = true
-
 internal fun hasNodeApi(): Boolean = js(
 """
 (typeof process !== 'undefined' 

@@ -6,10 +6,8 @@ import internal.*
 import org.gradle.api.*
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.*
-import java.io.*
 
-fun Project.configureWasm() {
+fun Project.configureWasmJs() {
     kotlin {
         @OptIn(ExperimentalWasmDsl::class)
         wasmJs {
@@ -32,4 +30,15 @@ fun Project.configureWasm() {
     }
 
     configureJsTestTasks(target = "wasmJs")
+}
+
+fun Project.configureWasmWasi() {
+    if (!project.targetIsEnabled("wasmWasi")) return
+
+    kotlin {
+        @OptIn(ExperimentalWasmDsl::class)
+        wasmWasi {
+            nodejs()
+        }
+    }
 }

@@ -14,9 +14,7 @@ import kotlin.coroutines.*
  */
 internal fun recoverStackTraceBridge(exception: Throwable, continuation: Continuation<*>): Throwable = try {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-    recoverStackTrace(exception, continuation).withCause(exception.cause)
+    recoverStackTrace(exception, continuation)
 } catch (_: Throwable) {
     exception
 }
-
-internal expect fun Throwable.withCause(cause: Throwable?): Throwable

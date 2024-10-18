@@ -22,6 +22,7 @@ fun isAvailableForPublication(publication: Publication): Boolean {
         "androidDebug",
         "js",
         "wasmJs",
+        "wasmWasi",
         "metadata",
         "kotlinMultiplatform"
     )

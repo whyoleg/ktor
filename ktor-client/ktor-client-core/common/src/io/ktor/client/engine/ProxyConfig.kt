@@ -16,7 +16,6 @@ public expect val ProxyConfig.type: ProxyType
 /**
  * A [proxy](https://ktor.io/docs/proxy.html) type.
  */
-@Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING", "KDocMissingDocumentation")
 public enum class ProxyType {
     SOCKS,
     HTTP,

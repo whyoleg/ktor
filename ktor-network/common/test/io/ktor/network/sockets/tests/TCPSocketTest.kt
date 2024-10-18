@@ -64,7 +64,6 @@ class TCPSocketTest {
 
         val socketPath = createTempFilePath("ktor-echo-test")
         try {
-
             val tcp = aSocket(selector).tcp()
             val server = tcp.bind(UnixSocketAddress(socketPath))
 
@@ -104,7 +103,6 @@ class TCPSocketTest {
             clientConnection.close()
 
             server.close()
-
         } finally {
             removeFile(socketPath)
         }

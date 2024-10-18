@@ -64,8 +64,3 @@ private external class Crypto {
 private external class SubtleCrypto {
     fun digest(algoName: String, buffer: Int8Array): Promise<ArrayBuffer>
 }
-
-/**
- * Compute SHA-1 hash for the specified [bytes]
- */
-public actual fun sha1(bytes: ByteArray): ByteArray = Sha1().digest(bytes)

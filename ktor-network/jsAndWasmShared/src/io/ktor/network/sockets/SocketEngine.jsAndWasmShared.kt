@@ -10,7 +10,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.*
 import kotlinx.io.*
 import kotlin.coroutines.*
-import io.ktor.network.sockets.nodejs.Socket as NodejsSocket
 
 internal actual suspend fun tcpConnect(
     selector: SelectorManager,

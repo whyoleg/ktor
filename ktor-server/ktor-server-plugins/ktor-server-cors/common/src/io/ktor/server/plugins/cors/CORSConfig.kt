@@ -62,7 +62,7 @@ public class CORSConfig {
                 ContentType.Application.FormUrlEncoded,
                 ContentType.MultiPart.FormData,
                 ContentType.Text.Plain
-            ).unmodifiable()
+            )
 
         @OptIn(InternalAPI::class)
         private fun caseInsensitiveSet(vararg elements: String): Set<String> =

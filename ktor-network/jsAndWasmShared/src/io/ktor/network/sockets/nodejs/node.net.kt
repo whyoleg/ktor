@@ -16,7 +16,6 @@ internal external interface JsBuffer // Int8Array
 internal expect fun ByteArray.toJsBuffer(fromIndex: Int, toIndex: Int): JsBuffer
 internal expect fun JsBuffer.toByteArray(): ByteArray
 
-
 internal external interface NodeNet {
     fun createConnection(options: CreateConnectionOptions): Socket
     fun createServer(options: CreateServerOptions): Server
@@ -40,7 +39,7 @@ internal fun CreateConnectionOptions(
         noDelay = socketOptions.noDelay
         timeout = when (socketOptions.socketTimeout) {
             Long.MAX_VALUE -> Int.MAX_VALUE
-            else           -> socketOptions.socketTimeout.toInt()
+            else -> socketOptions.socketTimeout.toInt()
         }
         keepAlive = socketOptions.keepAlive
     }
@@ -49,7 +48,7 @@ internal fun CreateConnectionOptions(
         path = remoteAddress.path
         timeout = when (socketOptions.socketTimeout) {
             Long.MAX_VALUE -> Int.MAX_VALUE
-            else           -> socketOptions.socketTimeout.toInt()
+            else -> socketOptions.socketTimeout.toInt()
         }
     }
 }
@@ -132,7 +131,7 @@ internal fun ServerListenOptions(localAddress: SocketAddress?): ServerListenOpti
             path = localAddress.path
         }
 
-        null                 -> {
+        null -> {
             host = "0.0.0.0"
             port = 0
         }
@@ -156,4 +155,3 @@ internal external interface TcpServerLocalAddressInfo : ServerLocalAddressInfo {
 }
 
 internal expect fun ServerLocalAddressInfo.toSocketAddress(): SocketAddress
-

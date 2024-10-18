@@ -16,6 +16,6 @@ public val initializer: SerializerInitializer = SerializerInitializer
 public object SerializerInitializer {
     init {
         @Suppress("DEPRECATION_ERROR")
-        serializersStore += KotlinxSerializer()
+        serializers += KotlinxSerializer()
     }
 }

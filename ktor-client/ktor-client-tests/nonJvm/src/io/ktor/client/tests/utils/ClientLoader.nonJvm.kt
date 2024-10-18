@@ -4,6 +4,12 @@
 
 package io.ktor.client.tests.utils
 
+import io.ktor.client.engine.*
+import io.ktor.utils.io.*
+
+@OptIn(InternalAPI::class)
+internal actual val enginesToTest: Iterable<HttpClientEngineFactory<HttpClientEngineConfig>> get() = engines
+
 // supported only on JVM
 internal actual fun platformDumpCoroutines() {}
 internal actual fun platformWaitForAllCoroutines() {}

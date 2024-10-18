@@ -1,5 +1,5 @@
 // Klib ABI Dump
-// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
+// Targets: [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, js, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, wasmJs, wasmWasi, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
 // Alias: native => [androidNativeArm32, androidNativeArm64, androidNativeX64, androidNativeX86, iosArm64, iosSimulatorArm64, iosX64, linuxArm64, linuxX64, macosArm64, macosX64, mingwX64, tvosArm64, tvosSimulatorArm64, tvosX64, watchosArm32, watchosArm64, watchosDeviceArm64, watchosSimulatorArm64, watchosX64]
 // Rendering settings:
 // - Signature version: 2
@@ -62,6 +62,7 @@ final enum class io.ktor.util.logging/LogLevel : kotlin/Enum<io.ktor.util.loggin
     enum entry DEBUG // io.ktor.util.logging/LogLevel.DEBUG|null[0]
     enum entry ERROR // io.ktor.util.logging/LogLevel.ERROR|null[0]
     enum entry INFO // io.ktor.util.logging/LogLevel.INFO|null[0]
+    enum entry NONE // io.ktor.util.logging/LogLevel.NONE|null[0]
     enum entry TRACE // io.ktor.util.logging/LogLevel.TRACE|null[0]
     enum entry WARN // io.ktor.util.logging/LogLevel.WARN|null[0]
 
@@ -70,9 +71,6 @@ final enum class io.ktor.util.logging/LogLevel : kotlin/Enum<io.ktor.util.loggin
 
     final fun valueOf(kotlin/String): io.ktor.util.logging/LogLevel // io.ktor.util.logging/LogLevel.valueOf|valueOf#static(kotlin.String){}[0]
     final fun values(): kotlin/Array<io.ktor.util.logging/LogLevel> // io.ktor.util.logging/LogLevel.values|values#static(){}[0]
-
-    // Targets: [js, wasmJs]
-    enum entry NONE // io.ktor.util.logging/LogLevel.NONE|null[0]
 }
 
 abstract interface io.ktor.util.converters/ConversionService { // io.ktor.util.converters/ConversionService|null[0]
@@ -507,7 +505,7 @@ final class io.ktor.util.reflect/TypeInfo { // io.ktor.util.reflect/TypeInfo|nul
     // Targets: [native]
     constructor <init>(kotlin.reflect/KClass<*>, kotlin.reflect/KType, kotlin.reflect/KType? = ...) // io.ktor.util.reflect/TypeInfo.<init>|<init>(kotlin.reflect.KClass<*>;kotlin.reflect.KType;kotlin.reflect.KType?){}[0]
 
-    // Targets: [js, wasmJs]
+    // Targets: [js, wasmJs, wasmWasi]
     constructor <init>(kotlin.reflect/KClass<*>, io.ktor.util.reflect/Type, kotlin.reflect/KType? = ...) // io.ktor.util.reflect/TypeInfo.<init>|<init>(kotlin.reflect.KClass<*>;io.ktor.util.reflect.Type;kotlin.reflect.KType?){}[0]
 }
 
@@ -803,6 +801,12 @@ sealed class io.ktor.util/Platform { // io.ktor.util/Platform|null[0]
         final fun hashCode(): kotlin/Int // io.ktor.util/Platform.Native.hashCode|hashCode(){}[0]
         final fun toString(): kotlin/String // io.ktor.util/Platform.Native.toString|toString(){}[0]
     }
+
+    final object WasmWasi : io.ktor.util/Platform { // io.ktor.util/Platform.WasmWasi|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // io.ktor.util/Platform.WasmWasi.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // io.ktor.util/Platform.WasmWasi.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // io.ktor.util/Platform.WasmWasi.toString|toString(){}[0]
+    }
 }
 
 final object io.ktor.util.converters/DefaultConversionService : io.ktor.util.converters/ConversionService { // io.ktor.util.converters/DefaultConversionService|null[0]
@@ -898,7 +902,7 @@ final val io.ktor.util.reflect/platformType // io.ktor.util.reflect/platformType
     // Targets: [native]
     final fun (kotlin.reflect/KType).<get-platformType>(): kotlin.reflect/KType // io.ktor.util.reflect/platformType.<get-platformType>|<get-platformType>@kotlin.reflect.KType(){}[0]
 
-    // Targets: [js, wasmJs]
+    // Targets: [js, wasmJs, wasmWasi]
     final fun (kotlin.reflect/KType).<get-platformType>(): io.ktor.util.reflect/Type // io.ktor.util.reflect/platformType.<get-platformType>|<get-platformType>@kotlin.reflect.KType(){}[0]
 final val io.ktor.util/platform // io.ktor.util/platform|@io.ktor.util.PlatformUtils{}platform[0]
     final fun (io.ktor.util/PlatformUtils).<get-platform>(): io.ktor.util/Platform // io.ktor.util/platform.<get-platform>|<get-platform>@io.ktor.util.PlatformUtils(){}[0]
@@ -1033,13 +1037,13 @@ final fun (kotlinx.coroutines/Dispatchers).io.ktor.util/createFixedThreadDispatc
 // Targets: [native]
 final fun io.ktor.util.network/ResolvedNetworkAddress(kotlin/String, kotlin/Int, kotlin/Any?): io.ktor.util.network/NetworkAddress // io.ktor.util.network/ResolvedNetworkAddress|ResolvedNetworkAddress(kotlin.String;kotlin.Int;kotlin.Any?){}[0]
 
-// Targets: [js, wasmJs]
+// Targets: [js, wasmJs, wasmWasi]
 abstract interface io.ktor.util.reflect/Type // io.ktor.util.reflect/Type|null[0]
 
-// Targets: [js, wasmJs]
+// Targets: [js, wasmJs, wasmWasi]
 abstract class io.ktor.util.network/NetworkAddress // io.ktor.util.network/NetworkAddress|null[0]
 
-// Targets: [js, wasmJs]
+// Targets: [js, wasmJs, wasmWasi]
 final class io.ktor.util.date/InvalidTimestampException : kotlin/IllegalStateException { // io.ktor.util.date/InvalidTimestampException|null[0]
     constructor <init>(kotlin/Long) // io.ktor.util.date/InvalidTimestampException.<init>|<init>(kotlin.Long){}[0]
 }
